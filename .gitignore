@@ -24,3 +24,6 @@ Thumbs.db
 .vscode/
 *.swp
 *.swo
+
+# Generated k8s manifest (image substituted in CI)
+k8s/deployment.resolved.yaml
