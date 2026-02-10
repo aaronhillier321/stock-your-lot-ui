@@ -1,5 +1,4 @@
-# Login App
-
+# Stock Your Lot UI
 UI application for stock your lot.
 
 ## Run locally
