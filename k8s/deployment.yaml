@@ -14,6 +14,16 @@ spec:
       labels:
         app: stock-your-lot
     spec:
+      # Allow scheduling on preemptible/spot and other commonly tainted GKE nodes
+      tolerations:
+        - key: cloud.google.com/gke-preemptible
+          operator: Equal
+          value: "true"
+          effect: NoSchedule
+        - key: cloud.google.com/gke-spot
+          operator: Equal
+          value: "true"
+          effect: NoSchedule
       containers:
         - name: app
           image: IMAGE_PLACEHOLDER
