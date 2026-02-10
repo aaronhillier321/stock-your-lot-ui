@@ -1,6 +1,6 @@
 # Login App
 
-A minimal React app with a login screen.
+UI application for stock your lot.
 
 ## Run locally
 
