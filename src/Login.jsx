@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { getApiBase } from './api'
+import { getApiBase, setStoredToken } from './api'
 import './Login.css'
 
 const ROLE_DEALER = 'dealer'
@@ -37,6 +37,7 @@ export default function Login() {
         setError(data.message || data.error || `Login failed (${res.status})`)
         return
       }
+      if (data.token) setStoredToken(data.token)
       navigate('/welcome', { state: { name: data.username, email: data.email } })
     } catch (err) {
       setError(err.message || 'Network error. Is the API running?')

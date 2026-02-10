@@ -9,7 +9,24 @@
 }
 
 .welcome-text {
-  margin: 0;
+  margin: 0 0 24px;
   font-size: 1.25rem;
   color: var(--text);
+}
+
+.welcome-signout {
+  padding: 10px 20px;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.welcome-signout:hover {
+  color: var(--text);
+  border-color: var(--text-muted);
 }
