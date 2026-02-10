@@ -50,3 +50,5 @@ In the repo: **Settings → Secrets and variables → Actions**, add:
 | `ARTIFACT_REGISTRY_REPO` | No | Artifact Registry repo name (default: `stock-your-lot`) |
 
 Merge (or push) to `main` to trigger a deploy.
+
+**If you see "Repository *** not found":** The workflow now creates the Artifact Registry repository automatically if it doesn’t exist. Ensure the **Artifact Registry API** is enabled (`gcloud services enable artifactregistry.googleapis.com`) and your service account has `roles/artifactregistry.repositories.admin` or at least create + push rights. Then re-run the workflow.
