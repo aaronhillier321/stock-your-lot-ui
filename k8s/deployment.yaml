@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: stock-your-lot
+  name: stock-your-lot-ui
   labels:
-    app: stock-your-lot
+    app: stock-your-lot-ui
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: stock-your-lot
+      app: stock-your-lot-ui
   template:
     metadata:
       labels:
-        app: stock-your-lot
+        app: stock-your-lot-ui
     spec:
       # Allow scheduling on preemptible/spot and other commonly tainted GKE nodes
       tolerations:

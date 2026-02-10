@@ -14,9 +14,9 @@ env:
   # GKE_REGION: region or zone (e.g. us-central1 or us-central1-a)
   # GKE_NAMESPACE: optional, defaults to 'default'
   # GKE_ZONE: optional, use for zonal clusters (e.g. us-central1-a); else GKE_REGION used with --region
-  # ARTIFACT_REGISTRY_REPO: optional, Artifact Registry repo name (default: stock-your-lot)
+  # ARTIFACT_REGISTRY_REPO: optional, Artifact Registry repo name (default: stock-your-lot-ui)
   # For Artifact Registry use region only (e.g. us-central1), not zone
-  IMAGE_NAME: stock-your-lot
+  IMAGE_NAME: stock-your-lot-ui
 
 jobs:
   build-and-deploy:
@@ -49,7 +49,7 @@ jobs:
         run: |
           REGION="${{ secrets.GKE_REGION }}"
           PROJECT_ID="${{ secrets.GCP_PROJECT_ID }}"
-          REPO="${{ secrets.ARTIFACT_REGISTRY_REPO || 'stock-your-lot' }}"
+          REPO="${{ secrets.ARTIFACT_REGISTRY_REPO || 'stock-your-lot-ui' }}"
           SHA="${GITHUB_SHA::7}"
           IMAGE="${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPO}/${IMAGE_NAME}:${SHA}"
           IMAGE_LATEST="${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPO}/${IMAGE_NAME}:latest"
@@ -80,4 +80,4 @@ jobs:
           kubectl create namespace "$NAMESPACE" --dry-run=client -o yaml | kubectl apply -f -
           kubectl apply -f k8s/deployment.resolved.yaml -n "$NAMESPACE"
           kubectl apply -f k8s/service.yaml -n "$NAMESPACE"
-          kubectl rollout status deployment/stock-your-lot -n "$NAMESPACE" --timeout=120s
+          kubectl rollout status deployment/stock-your-lot-ui -n "$NAMESPACE" --timeout=120s

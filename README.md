@@ -1,5 +1,5 @@
 # Stock Your Lot UI
-UI application for stock your lot.
+UI application for Stock Your Lot.
 
 ## Run locally
 
@@ -8,7 +8,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173) in your browser.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Build
 
@@ -29,7 +29,7 @@ On every push to `main`, GitHub Actions builds a Docker image, pushes it to Goog
 2. **GKE cluster** (regional or zonal).
 3. **Artifact Registry repository** (Docker format) in the same region, e.g.:
    ```bash
-   gcloud artifacts repositories create stock-your-lot \
+   gcloud artifacts repositories create stock-your-lot-ui \
      --repository-format=docker \
      --location=us-central1
    ```
@@ -47,7 +47,7 @@ In the repo: **Settings → Secrets and variables → Actions**, add:
 | `GKE_REGION` | Yes | Region for Artifact Registry and cluster (e.g. `us-central1`) |
 | `GKE_ZONE` | No | For zonal clusters only (e.g. `us-central1-a`) |
 | `GKE_NAMESPACE` | No | Kubernetes namespace (default: `default`) |
-| `ARTIFACT_REGISTRY_REPO` | No | Artifact Registry repo name (default: `stock-your-lot`) |
+| `ARTIFACT_REGISTRY_REPO` | No | Artifact Registry repo name (default: `stock-your-lot-ui`) |
 
 Merge (or push) to `main` to trigger a deploy.
 

@@ -1,7 +1,11 @@
 import { useState } from 'react'
 import './Login.css'
 
+const ROLE_DEALER = 'dealer'
+const ROLE_BUYER = 'buyer'
+
 export default function Login() {
+  const [role, setRole] = useState(ROLE_DEALER)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -22,7 +26,7 @@ export default function Login() {
     // Simulate login – replace with real auth later
     setTimeout(() => {
       setIsSubmitting(false)
-      alert(`Welcome! (Demo: you entered ${email})`)
+      alert(`Welcome, ${role}! (Demo: you entered ${email})`)
     }, 800)
   }
 
@@ -32,6 +36,27 @@ export default function Login() {
         <div className="login-header">
           <h1 className="login-title">Sign in</h1>
           <p className="login-subtitle">Enter your details to continue</p>
+        </div>
+
+        <div className="login-tabs" role="tablist" aria-label="Account type">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={role === ROLE_DEALER}
+            className={`login-tab ${role === ROLE_DEALER ? 'login-tab--active' : ''}`}
+            onClick={() => setRole(ROLE_DEALER)}
+          >
+            Dealer
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={role === ROLE_BUYER}
+            className={`login-tab ${role === ROLE_BUYER ? 'login-tab--active' : ''}`}
+            onClick={() => setRole(ROLE_BUYER)}
+          >
+            Buyer
+          </button>
         </div>
 
         <form className="login-form" onSubmit={handleSubmit}>
