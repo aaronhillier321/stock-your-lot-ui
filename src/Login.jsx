@@ -1,22 +1,24 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { getApiBase } from './api'
 import './Login.css'
 
 const ROLE_DEALER = 'dealer'
 const ROLE_BUYER = 'buyer'
 
 export default function Login() {
+  const navigate = useNavigate()
   const [role, setRole] = useState(ROLE_DEALER)
-  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
     setError('')
-    if (!email.trim()) {
-      setError('Please enter your email.')
+    if (!username.trim()) {
+      setError('Please enter your name.')
       return
     }
     if (!password) {
@@ -24,11 +26,23 @@ export default function Login() {
       return
     }
     setIsSubmitting(true)
-    // Simulate login – replace with real auth later
-    setTimeout(() => {
+    try {
+      const res = await fetch(`${getApiBase()}/api/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: username.trim(), password }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        setError(data.message || data.error || `Login failed (${res.status})`)
+        return
+      }
+      navigate('/welcome', { state: { name: data.username, email: data.email } })
+    } catch (err) {
+      setError(err.message || 'Network error. Is the API running?')
+    } finally {
       setIsSubmitting(false)
-      alert(`Welcome, ${role}! (Demo: you entered ${email})`)
-    }, 800)
+    }
   }
 
   return (
@@ -68,14 +82,14 @@ export default function Login() {
           )}
 
           <label className="login-label">
-            Email
+            Name
             <input
-              type="email"
+              type="text"
               className="login-input"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              autoComplete="email"
+              placeholder="your name"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              autoComplete="username"
               disabled={isSubmitting}
             />
           </label>

@@ -5,6 +5,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 3000,
+    // Local API: localhost:8080 — /api requests are proxied there in dev
     proxy: {
       '/api': {
         target: 'http://localhost:8080',

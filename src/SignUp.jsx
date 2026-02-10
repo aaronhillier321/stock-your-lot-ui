@@ -17,11 +17,11 @@ export default function SignUp() {
     setSuccess('')
 
     if (!username.trim()) {
-      setError('Please enter a username.')
+      setError('Please enter your name.')
       return
     }
     if (username.trim().length < 2) {
-      setError('Username must be at least 2 characters.')
+      setError('Name must be at least 2 characters.')
       return
     }
     if (!email.trim()) {
@@ -85,11 +85,11 @@ export default function SignUp() {
           )}
 
           <label className="signup-label">
-            Username
+            Name
             <input
               type="text"
               className="signup-input"
-              placeholder="johndoe"
+              placeholder="your name"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               autoComplete="username"
