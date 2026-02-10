@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import './Login.css'
 
 const ROLE_DEALER = 'dealer'
@@ -102,7 +103,7 @@ export default function Login() {
         </form>
 
         <p className="login-footer">
-          Don’t have an account? <a href="#">Sign up</a>
+          Don’t have an account? <Link to="/signup">Sign up</Link>
         </p>
       </div>
     </div>
