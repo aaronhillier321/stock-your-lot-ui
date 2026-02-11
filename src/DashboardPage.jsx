@@ -1,0 +1,41 @@
+import { useNavigate, Navigate } from 'react-router-dom'
+import { clearStoredToken, clearStoredUserName, clearStoredUserRole, getStoredToken, getStoredUserName } from './api'
+import './DashboardPage.css'
+
+const ROLE_LABELS = {
+  admin: 'Admin',
+  associate: 'Associate',
+  dealer: 'Dealer',
+}
+
+export default function DashboardPage({ role }) {
+  const navigate = useNavigate()
+  const token = getStoredToken()
+  const name = getStoredUserName()
+  const label = ROLE_LABELS[role] ?? role
+
+  if (!token) {
+    return <Navigate to="/" replace />
+  }
+
+  function handleSignOut() {
+    clearStoredToken()
+    clearStoredUserName()
+    clearStoredUserRole()
+    navigate('/', { replace: true })
+  }
+
+  return (
+    <div className="dashboard">
+      <div className="dashboard-card">
+        <h2 className="dashboard-title">{label}</h2>
+        <p className="dashboard-text">
+          Welcome{name ? `, ${name}` : ''}. You’re in the {label.toLowerCase()} area.
+        </p>
+        <button type="button" className="dashboard-signout" onClick={handleSignOut}>
+          Sign out
+        </button>
+      </div>
+    </div>
+  )
+}

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { getApiBase, setStoredToken, setStoredUserName } from './api'
+import { getApiBase, setStoredToken, setStoredUserName, setStoredUserRole, getLandingRouteFromRoles } from './api'
 import './Login.css'
 
 export default function Login() {
@@ -35,7 +35,9 @@ export default function Login() {
       }
       if (data.token) setStoredToken(data.token)
       if (data.username) setStoredUserName(data.username)
-      navigate('/welcome', { state: { name: data.username, email: data.email } })
+      const landingRole = getLandingRouteFromRoles(data.roles)
+      setStoredUserRole(landingRole)
+      navigate(`/${landingRole}`, { state: { name: data.username, email: data.email } })
     } catch (err) {
       setError(err.message || 'Network error. Is the API running?')
     } finally {

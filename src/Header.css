@@ -9,12 +9,26 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
+.app-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .app-header-logo {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: #e6d87a;
+}
+
+.app-header-role {
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
 }
 
 .app-header-welcome {
