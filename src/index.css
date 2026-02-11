@@ -36,6 +36,15 @@ body {
   flex-direction: column;
 }
 
+.app-body {
+  margin-left: 56px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  transition: margin-left 0.3s ease;
+}
+
 .app-main {
   flex: 1;
   display: flex;

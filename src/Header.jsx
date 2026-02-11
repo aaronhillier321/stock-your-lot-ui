@@ -34,6 +34,34 @@ function UserIcon() {
   )
 }
 
+function NotificationIcon() {
+  return (
+    <svg className="app-header-action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+    </svg>
+  )
+}
+
+function MailIcon() {
+  return (
+    <svg className="app-header-action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+      <polyline points="22,6 12,13 2,6" />
+    </svg>
+  )
+}
+
+function HelpIcon() {
+  return (
+    <svg className="app-header-action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <circle cx="12" cy="12" r="10" />
+      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+      <line x1="12" y1="17" x2="12.01" y2="17" />
+    </svg>
+  )
+}
+
 export default function Header() {
   const navigate = useNavigate()
   const name = getStoredUserName()
@@ -62,15 +90,26 @@ export default function Header() {
         {badgeLabel && <span className="app-header-role">{badgeLabel}</span>}
       </div>
       {name && (
-        <div className="app-header-user">
-          <button type="button" className="app-header-user-trigger" aria-haspopup="true" aria-expanded="false">
-            <UserIcon />
-            <span className="app-header-user-name">{displayName}</span>
+        <div className="app-header-right">
+          <button type="button" className="app-header-action" title="Notifications" aria-label="Notifications">
+            <NotificationIcon />
           </button>
-          <div className="app-header-dropdown">
-            <button type="button" className="app-header-signout" onClick={handleSignOut}>
-              Sign out
+          <button type="button" className="app-header-action" title="Mail" aria-label="Mail">
+            <MailIcon />
+          </button>
+          <button type="button" className="app-header-action" title="Help" aria-label="Help">
+            <HelpIcon />
+          </button>
+          <div className="app-header-user">
+            <button type="button" className="app-header-user-trigger" aria-haspopup="true" aria-expanded="false">
+              <UserIcon />
+              <span className="app-header-user-name">{displayName}</span>
             </button>
+            <div className="app-header-dropdown">
+              <button type="button" className="app-header-signout" onClick={handleSignOut}>
+                Sign out
+              </button>
+            </div>
           </div>
         </div>
       )}
