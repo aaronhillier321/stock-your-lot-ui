@@ -49,7 +49,7 @@ jobs:
         run: |
           REGION="${{ secrets.GKE_REGION }}"
           PROJECT_ID="${{ secrets.GCP_PROJECT_ID }}"
-          REPO="${{ secrets.ARTIFACT_REGISTRY_REPO || 'stock-your-lot-ui' }}"
+          REPO="${{ secrets.ARTIFACT_REGISTRY_REPO || 'stock-your-lot' }}"
           SHA="${GITHUB_SHA::7}"
           IMAGE="${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPO}/${IMAGE_NAME}:${SHA}"
           IMAGE_LATEST="${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPO}/${IMAGE_NAME}:latest"
