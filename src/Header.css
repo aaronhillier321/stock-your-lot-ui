@@ -1,0 +1,24 @@
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  min-height: 56px;
+  background: var(--header-blue);
+  color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.app-header-logo {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #e6d87a;
+}
+
+.app-header-welcome {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  opacity: 0.95;
+}

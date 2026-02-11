@@ -1,14 +1,10 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { getApiBase, setStoredToken } from './api'
+import { getApiBase, setStoredToken, setStoredUserName } from './api'
 import './Login.css'
-
-const ROLE_DEALER = 'dealer'
-const ROLE_BUYER = 'buyer'
 
 export default function Login() {
   const navigate = useNavigate()
-  const [role, setRole] = useState(ROLE_DEALER)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -38,6 +34,7 @@ export default function Login() {
         return
       }
       if (data.token) setStoredToken(data.token)
+      if (data.username) setStoredUserName(data.username)
       navigate('/welcome', { state: { name: data.username, email: data.email } })
     } catch (err) {
       setError(err.message || 'Network error. Is the API running?')
@@ -52,27 +49,6 @@ export default function Login() {
         <div className="login-header">
           <h1 className="login-title">Sign in</h1>
           <p className="login-subtitle">Enter your details to continue</p>
-        </div>
-
-        <div className="login-tabs" role="tablist" aria-label="Account type">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={role === ROLE_DEALER}
-            className={`login-tab ${role === ROLE_DEALER ? 'login-tab--active' : ''}`}
-            onClick={() => setRole(ROLE_DEALER)}
-          >
-            Dealer
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={role === ROLE_BUYER}
-            className={`login-tab ${role === ROLE_BUYER ? 'login-tab--active' : ''}`}
-            onClick={() => setRole(ROLE_BUYER)}
-          >
-            Buyer
-          </button>
         </div>
 
         <form className="login-form" onSubmit={handleSubmit}>

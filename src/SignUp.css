@@ -1,13 +1,9 @@
 .signup {
   width: 100%;
-  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background:
-    radial-gradient(ellipse 80% 50% at 50% -20%, var(--accent-glow), transparent),
-    var(--bg-deep);
 }
 
 .signup-card {
@@ -17,7 +13,7 @@
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
 }
 
 .signup-header {
@@ -48,17 +44,17 @@
   padding: 12px 16px;
   font-size: 0.875rem;
   color: var(--error);
-  background: rgba(255, 92, 124, 0.1);
-  border: 1px solid rgba(255, 92, 124, 0.3);
+  background: #fef2f2;
+  border: 1px solid #fecaca;
   border-radius: var(--radius-sm);
 }
 
 .signup-success {
   padding: 12px 16px;
   font-size: 0.875rem;
-  color: #5cff9a;
-  background: rgba(92, 255, 154, 0.1);
-  border: 1px solid rgba(92, 255, 154, 0.3);
+  color: var(--success);
+  background: #f0fff4;
+  border: 1px solid #9ae6b4;
   border-radius: var(--radius-sm);
 }
 
@@ -77,7 +73,7 @@
   font-family: inherit;
   font-size: 1rem;
   color: var(--text);
-  background: var(--bg-deep);
+  background: #f8f9fa;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   transition: border-color 0.2s, box-shadow 0.2s;
@@ -85,11 +81,11 @@
 
 .signup-input::placeholder {
   color: var(--text-muted);
-  opacity: 0.7;
+  opacity: 0.8;
 }
 
 .signup-input:hover:not(:disabled) {
-  border-color: #3a3a42;
+  border-color: #c5c9ce;
 }
 
 .signup-input:focus {
@@ -110,7 +106,7 @@
   font-size: 1rem;
   font-weight: 600;
   color: white;
-  background: var(--accent);
+  background: var(--header-blue);
   border: none;
   border-radius: var(--radius-sm);
   cursor: pointer;
@@ -118,7 +114,7 @@
 }
 
 .signup-button:hover:not(:disabled) {
-  background: var(--accent-hover);
+  background: var(--header-blue-hover);
 }
 
 .signup-button:active:not(:disabled) {
@@ -140,7 +136,7 @@
 }
 
 .signup-footer a {
-  color: var(--accent);
+  color: var(--header-blue);
   text-decoration: none;
   font-weight: 500;
 }

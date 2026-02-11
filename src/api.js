@@ -1,5 +1,6 @@
 const HOSTED_API_URL = 'http://136.118.5.61'
 const TOKEN_KEY = 'stock-your-lot-token'
+const USER_NAME_KEY = 'stock-your-lot-user-name'
 
 export function getApiBase() {
   if (import.meta.env.VITE_API_BASE_URL) {
@@ -23,6 +24,19 @@ export function setStoredToken(token) {
 
 export function clearStoredToken() {
   localStorage.removeItem(TOKEN_KEY)
+}
+
+export function getStoredUserName() {
+  return localStorage.getItem(USER_NAME_KEY)
+}
+
+export function setStoredUserName(name) {
+  if (name) localStorage.setItem(USER_NAME_KEY, name)
+  else localStorage.removeItem(USER_NAME_KEY)
+}
+
+export function clearStoredUserName() {
+  localStorage.removeItem(USER_NAME_KEY)
 }
 
 /**

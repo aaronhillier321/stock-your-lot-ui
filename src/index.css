@@ -5,15 +5,18 @@
 }
 
 :root {
-  --bg-deep: #0f0f12;
-  --bg-card: #18181c;
-  --border: #2a2a30;
-  --text: #e8e8ed;
-  --text-muted: #8b8b94;
-  --accent: #7c5cff;
-  --accent-hover: #9378ff;
-  --accent-glow: rgba(124, 92, 255, 0.25);
-  --error: #ff5c7c;
+  --header-blue: #1e5a8e;
+  --header-blue-hover: #164870;
+  --bg-page: #f0f2f5;
+  --bg-card: #ffffff;
+  --border: #e0e3e8;
+  --text: #1a1d21;
+  --text-muted: #5c6166;
+  --accent: #1e5a8e;
+  --accent-hover: #164870;
+  --accent-glow: rgba(30, 90, 142, 0.2);
+  --error: #c53030;
+  --success: #276749;
   --radius: 12px;
   --radius-sm: 8px;
 }
@@ -22,7 +25,7 @@ body {
   margin: 0;
   min-height: 100vh;
   font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: var(--bg-deep);
+  background: var(--bg-page);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
 }
@@ -30,6 +33,34 @@ body {
 #root {
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
+}
+
+.app-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 24px;
+  position: relative;
+  background: var(--bg-page);
+}
+
+/* Optional faded background image; set --bg-image in your CSS to override */
+.app-main::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--bg-image, linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%));
+  background-size: cover;
+  background-position: center;
+  opacity: 0.4;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.app-main > * {
+  position: relative;
+  z-index: 1;
 }

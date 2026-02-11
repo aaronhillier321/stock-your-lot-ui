@@ -1,13 +1,9 @@
 .login {
   width: 100%;
-  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background: 
-    radial-gradient(ellipse 80% 50% at 50% -20%, var(--accent-glow), transparent),
-    var(--bg-deep);
 }
 
 .login-card {
@@ -17,7 +13,7 @@
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
 }
 
 .login-header {
@@ -38,40 +34,6 @@
   color: var(--text-muted);
 }
 
-.login-tabs {
-  display: flex;
-  gap: 0;
-  margin-bottom: 24px;
-  padding: 4px;
-  background: var(--bg-deep);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-}
-
-.login-tab {
-  flex: 1;
-  padding: 10px 16px;
-  font-family: inherit;
-  font-size: 0.9375rem;
-  font-weight: 500;
-  color: var(--text-muted);
-  background: transparent;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: color 0.2s, background 0.2s;
-}
-
-.login-tab:hover {
-  color: var(--text);
-}
-
-.login-tab--active {
-  color: var(--text);
-  background: var(--bg-card);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-}
-
 .login-form {
   display: flex;
   flex-direction: column;
@@ -82,8 +44,8 @@
   padding: 12px 16px;
   font-size: 0.875rem;
   color: var(--error);
-  background: rgba(255, 92, 124, 0.1);
-  border: 1px solid rgba(255, 92, 124, 0.3);
+  background: #fef2f2;
+  border: 1px solid #fecaca;
   border-radius: var(--radius-sm);
 }
 
@@ -102,7 +64,7 @@
   font-family: inherit;
   font-size: 1rem;
   color: var(--text);
-  background: var(--bg-deep);
+  background: #f8f9fa;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   transition: border-color 0.2s, box-shadow 0.2s;
@@ -110,11 +72,11 @@
 
 .login-input::placeholder {
   color: var(--text-muted);
-  opacity: 0.7;
+  opacity: 0.8;
 }
 
 .login-input:hover:not(:disabled) {
-  border-color: #3a3a42;
+  border-color: #c5c9ce;
 }
 
 .login-input:focus {
@@ -135,7 +97,7 @@
   font-size: 1rem;
   font-weight: 600;
   color: white;
-  background: var(--accent);
+  background: var(--header-blue);
   border: none;
   border-radius: var(--radius-sm);
   cursor: pointer;
@@ -143,7 +105,7 @@
 }
 
 .login-button:hover:not(:disabled) {
-  background: var(--accent-hover);
+  background: var(--header-blue-hover);
 }
 
 .login-button:active:not(:disabled) {
@@ -165,7 +127,7 @@
 }
 
 .login-footer a {
-  color: var(--accent);
+  color: var(--header-blue);
   text-decoration: none;
   font-weight: 500;
 }
