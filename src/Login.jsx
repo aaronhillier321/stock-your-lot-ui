@@ -9,7 +9,7 @@ const ROLE_BUYER = 'buyer'
 export default function Login() {
   const navigate = useNavigate()
   const [role, setRole] = useState(ROLE_DEALER)
-  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -17,8 +17,8 @@ export default function Login() {
   async function handleSubmit(e) {
     e.preventDefault()
     setError('')
-    if (!username.trim()) {
-      setError('Please enter your name.')
+    if (!email.trim()) {
+      setError('Please enter your email.')
       return
     }
     if (!password) {
@@ -30,7 +30,7 @@ export default function Login() {
       const res = await fetch(`${getApiBase()}/api/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: username.trim(), password }),
+        body: JSON.stringify({ email: email.trim(), password }),
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) {
@@ -83,14 +83,14 @@ export default function Login() {
           )}
 
           <label className="login-label">
-            Name
+            Email
             <input
-              type="text"
+              type="email"
               className="login-input"
-              placeholder="your name"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              autoComplete="username"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
               disabled={isSubmitting}
             />
           </label>
