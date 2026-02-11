@@ -2,6 +2,7 @@ const HOSTED_API_URL = 'http://136.118.5.61'
 const TOKEN_KEY = 'stock-your-lot-token'
 const USER_NAME_KEY = 'stock-your-lot-user-name'
 const USER_ROLE_KEY = 'stock-your-lot-user-role'
+const DEALER_NAME_KEY = 'stock-your-lot-dealer-name'
 
 export function getApiBase() {
   if (import.meta.env.VITE_API_BASE_URL) {
@@ -53,18 +54,57 @@ export function clearStoredUserRole() {
   localStorage.removeItem(USER_ROLE_KEY)
 }
 
+export function getStoredDealerName() {
+  return localStorage.getItem(DEALER_NAME_KEY)
+}
+
+export function setStoredDealerName(name) {
+  if (name != null && String(name).trim()) localStorage.setItem(DEALER_NAME_KEY, String(name).trim())
+  else localStorage.removeItem(DEALER_NAME_KEY)
+}
+
+export function clearStoredDealerName() {
+  localStorage.removeItem(DEALER_NAME_KEY)
+}
+
 /**
- * Resolve landing route from API roles array. Priority: admin > associate > dealer.
- * @param {string[]} roles - e.g. ["ADMIN"], ["ASSOCIATE"], ["DEALER"], ["ROLE_ADMIN"]
+ * Check if a role list contains Sales_Admin or Sales_Associate (any casing/underscore).
+ */
+function hasSalesAdmin(roleList) {
+  if (!Array.isArray(roleList)) return false
+  return roleList.some((r) => String(r).toLowerCase().replace(/-/g, '_').includes('sales_admin'))
+}
+
+function hasSalesAssociate(roleList) {
+  if (!Array.isArray(roleList)) return false
+  return roleList.some((r) => String(r).toLowerCase().replace(/-/g, '_').includes('sales_associate'))
+}
+
+/**
+ * Resolve landing route from DEALERSHIP_ROLES in login response.
+ * Roles: Sales_Admin, Sales_Associate, User. Priority: Sales_Admin > Sales_Associate > User (dealer).
+ * @param {string[]} dealershipRoles - e.g. ["Sales_Admin"], ["Sales_Associate"], ["User"]
  * @returns {'admin'|'associate'|'dealer'}
  */
-export function getLandingRouteFromRoles(roles) {
-  if (!Array.isArray(roles)) return 'dealer'
-  const lower = roles.map((r) => String(r).toLowerCase())
-  if (lower.some((r) => r.includes('admin'))) return 'admin'
-  if (lower.some((r) => r.includes('associate'))) return 'associate'
-  if (lower.some((r) => r.includes('dealer'))) return 'dealer'
+export function getLandingRouteFromDealershipRoles(dealershipRoles) {
+  if (!Array.isArray(dealershipRoles)) return 'dealer'
+  const normalized = dealershipRoles.map((r) => String(r).trim())
+  if (normalized.some((r) => r === 'Sales_Admin' || r.toLowerCase().includes('sales_admin'))) return 'admin'
+  if (normalized.some((r) => r === 'Sales_Associate' || r.toLowerCase().includes('sales_associate'))) return 'associate'
+  if (normalized.some((r) => r === 'User' || r.toLowerCase() === 'user')) return 'dealer'
   return 'dealer'
+}
+
+/**
+ * Resolve landing route: sales_admin / sales_associate in roles trump dealershipRoles.
+ * @param {string[]} roles - user roles (Sales_Admin, Sales_Associate trump dealership)
+ * @param {string[]} dealershipRoles - dealership roles when no sales role present
+ * @returns {'admin'|'associate'|'dealer'}
+ */
+export function getLandingRoute(roles, dealershipRoles) {
+  if (hasSalesAdmin(roles)) return 'admin'
+  if (hasSalesAssociate(roles)) return 'associate'
+  return getLandingRouteFromDealershipRoles(dealershipRoles)
 }
 
 /**

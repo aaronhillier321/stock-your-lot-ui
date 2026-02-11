@@ -1,5 +1,5 @@
 import { useLocation, useNavigate, Navigate } from 'react-router-dom'
-import { clearStoredToken, clearStoredUserName, clearStoredUserRole, getStoredUserName } from './api'
+import { clearStoredToken, clearStoredUserName, clearStoredUserRole, clearStoredDealerName, getStoredUserName } from './api'
 import './Welcome.css'
 
 export default function Welcome() {
@@ -17,6 +17,7 @@ export default function Welcome() {
     clearStoredToken()
     clearStoredUserName()
     clearStoredUserRole()
+    clearStoredDealerName()
     navigate('/', { replace: true })
   }
 

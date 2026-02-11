@@ -1,10 +1,10 @@
 import { useNavigate, Navigate } from 'react-router-dom'
-import { clearStoredToken, clearStoredUserName, clearStoredUserRole, getStoredToken, getStoredUserName } from './api'
+import { clearStoredToken, clearStoredUserName, clearStoredUserRole, clearStoredDealerName, getStoredToken, getStoredUserName } from './api'
 import './DashboardPage.css'
 
 const ROLE_LABELS = {
-  admin: 'Admin',
-  associate: 'Associate',
+  admin: 'Sales Admin',
+  associate: 'Sales Associate',
   dealer: 'Dealer',
 }
 
@@ -22,6 +22,7 @@ export default function DashboardPage({ role }) {
     clearStoredToken()
     clearStoredUserName()
     clearStoredUserRole()
+    clearStoredDealerName()
     navigate('/', { replace: true })
   }
 
@@ -30,7 +31,7 @@ export default function DashboardPage({ role }) {
       <div className="dashboard-card">
         <h2 className="dashboard-title">{label}</h2>
         <p className="dashboard-text">
-          Welcome{name ? `, ${name}` : ''}. You’re in the {label.toLowerCase()} area.
+          Welcome{name ? `, ${name}` : ''}. You’re in the {label} area.
         </p>
         <button type="button" className="dashboard-signout" onClick={handleSignOut}>
           Sign out

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { getApiBase, setStoredToken, setStoredUserName, setStoredUserRole, getLandingRouteFromRoles } from './api'
+import { getApiBase, setStoredToken, setStoredUserName, setStoredUserRole, setStoredDealerName, getLandingRoute } from './api'
 import './Login.css'
 
 export default function Login() {
@@ -35,7 +35,9 @@ export default function Login() {
       }
       if (data.token) setStoredToken(data.token)
       if (data.username) setStoredUserName(data.username)
-      const landingRole = getLandingRouteFromRoles(data.roles)
+      const dealerName = data.dealerName ?? data.dealershipName
+      if (dealerName != null) setStoredDealerName(dealerName)
+      const landingRole = getLandingRoute(data.roles, data.dealershipRoles)
       setStoredUserRole(landingRole)
       navigate(`/${landingRole}`, { state: { name: data.username, email: data.email } })
     } catch (err) {

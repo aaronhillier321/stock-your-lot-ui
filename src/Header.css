@@ -31,8 +31,78 @@
   border-radius: 6px;
 }
 
-.app-header-welcome {
+.app-header-user {
+  position: relative;
+}
+
+.app-header-user-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
   font-size: 0.9375rem;
   font-weight: 500;
+  color: white;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
   opacity: 0.95;
+  font-family: inherit;
+}
+
+.app-header-user-trigger:hover {
+  background: rgba(255, 255, 255, 0.15);
+  opacity: 1;
+}
+
+.app-header-user-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.app-header-user-name {
+  white-space: nowrap;
+}
+
+.app-header-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 4px;
+  padding: 6px 0;
+  min-width: 120px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0.15s, opacity 0.15s;
+  z-index: 100;
+}
+
+.app-header-user:hover .app-header-dropdown {
+  visibility: visible;
+  opacity: 1;
+}
+
+.app-header-signout {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.app-header-signout:hover {
+  background: #f0f2f5;
 }
