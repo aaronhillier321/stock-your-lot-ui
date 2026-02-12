@@ -1,3 +1,4 @@
+// Hosted UI: http://34.182.101.241/ — API base URL used in prod when VITE_API_BASE_URL not set
 const HOSTED_API_URL = 'http://136.118.5.61'
 const TOKEN_KEY = 'stock-your-lot-token'
 const USER_NAME_KEY = 'stock-your-lot-user-name'
