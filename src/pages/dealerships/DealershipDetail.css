@@ -1,0 +1,247 @@
+.dealership-detail-page {
+  width: 100%;
+  padding: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.dealership-detail-card {
+  width: 100%;
+  max-width: 560px;
+  padding: 32px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+}
+
+.dealership-detail-back {
+  display: inline-block;
+  margin-bottom: 20px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--header-blue);
+  text-decoration: none;
+}
+
+.dealership-detail-back:hover {
+  text-decoration: underline;
+}
+
+.dealership-detail-title {
+  margin: 0 0 24px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.dealership-detail-info {
+  margin: 0 0 24px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 24px;
+}
+
+.dealership-detail-info dt {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.dealership-detail-info dd {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.dealership-detail-invite-section {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.dealership-detail-add-user-btn {
+  padding: 10px 18px;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: white;
+  background: var(--header-blue);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.dealership-detail-add-user-btn:hover {
+  background: var(--header-blue-hover);
+}
+
+/* Modal */
+.dealership-detail-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.dealership-detail-modal {
+  width: 100%;
+  max-width: 400px;
+  padding: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+}
+
+.dealership-detail-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.dealership-detail-modal-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.dealership-detail-modal-close {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s;
+}
+
+.dealership-detail-modal-close:hover {
+  color: var(--text);
+  background: #f0f2f5;
+}
+
+.dealership-detail-modal .dealership-detail-invite-form {
+  padding: 24px;
+  max-width: none;
+}
+
+.dealership-detail-modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.dealership-detail-invite-cancel {
+  padding: 10px 18px;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: var(--bg-page);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.dealership-detail-invite-cancel:hover:not(:disabled) {
+  border-color: var(--text-muted);
+  color: var(--text);
+}
+
+.dealership-detail-invite-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 320px;
+}
+
+.dealership-detail-invite-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.dealership-detail-invite-input {
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--text);
+  background: var(--bg-page);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.dealership-detail-invite-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+.dealership-detail-invite-input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.8;
+}
+
+.dealership-detail-invite-error {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--error);
+}
+
+.dealership-detail-invite-success {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--success);
+}
+
+.dealership-detail-invite-btn {
+  padding: 10px 18px;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: white;
+  background: var(--header-blue);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.dealership-detail-invite-btn:hover:not(:disabled) {
+  background: var(--header-blue-hover);
+}
+
+.dealership-detail-invite-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.dealership-detail-loading,
+.dealership-detail-error {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text-muted);
+}
+
+.dealership-detail-error {
+  color: var(--error);
+  margin-bottom: 16px;
+}

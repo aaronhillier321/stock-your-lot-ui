@@ -1,39 +1,31 @@
-import { useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import Header from './Header'
-import Sidebar from './Sidebar'
-import Login from './Login'
-import SignUp from './SignUp'
-import Welcome from './Welcome'
-import Admin from './Admin'
-import Associate from './Associate'
-import Dealer from './Dealer'
-
-const SIDEBAR_WIDTH = 240
-const SIDEBAR_COLLAPSED = 56
+import Header from './components/layout/Header'
+import Login from './pages/auth/Login'
+import SignUp from './pages/auth/SignUp'
+import Welcome from './pages/dashboard/Welcome'
+import Admin from './pages/dashboard/Admin'
+import Associate from './pages/dashboard/Associate'
+import Dealer from './pages/dashboard/Dealer'
+import Dealerships from './pages/dealerships/Dealerships'
+import DealershipDetail from './pages/dealerships/DealershipDetail'
 
 export default function App() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   return (
     <BrowserRouter>
-      <Sidebar isOpen={isSidebarOpen} onToggle={() => setIsSidebarOpen((o) => !o)} />
-      <div
-        className="app-body"
-        style={{ marginLeft: isSidebarOpen ? SIDEBAR_WIDTH : SIDEBAR_COLLAPSED }}
-      >
-        <Header />
-        <main className="app-main">
-          <Routes>
-            <Route path="/" element={<Login />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/welcome" element={<Welcome />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/associate" element={<Associate />} />
-            <Route path="/dealer" element={<Dealer />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </main>
-      </div>
+      <Header />
+      <main className="app-main">
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/welcome" element={<Welcome />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/associate" element={<Associate />} />
+          <Route path="/dealer" element={<Dealer />} />
+          <Route path="/dealerships" element={<Dealerships />} />
+          <Route path="/dealerships/:id" element={<DealershipDetail />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </main>
     </BrowserRouter>
   )
 }

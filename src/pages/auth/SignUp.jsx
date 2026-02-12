@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { getApiBase } from './api'
+import { getApiBase } from '../../api'
 import './SignUp.css'
 
 export default function SignUp() {

@@ -139,3 +139,18 @@
 .app-header-signout:hover {
   background: #f0f2f5;
 }
+
+.app-header-dealerships {
+  padding: 8px 14px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: white;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.app-header-dealerships:hover {
+  background: rgba(255, 255, 255, 0.25);
+}

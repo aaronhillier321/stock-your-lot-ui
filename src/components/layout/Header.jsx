@@ -1,20 +1,12 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import {
   getStoredUserName,
-  getStoredUserRole,
-  getStoredDealerName,
   clearStoredToken,
   clearStoredUserName,
   clearStoredUserRole,
   clearStoredDealerName,
-} from './api'
+} from '../../api'
 import './Header.css'
-
-const ROLE_LABELS = {
-  admin: 'Admin',
-  associate: 'Associate',
-  dealer: 'User',
-}
 
 function formatDisplayName(name) {
   if (!name || typeof name !== 'string') return ''
@@ -65,14 +57,6 @@ function HelpIcon() {
 export default function Header() {
   const navigate = useNavigate()
   const name = getStoredUserName()
-  const role = getStoredUserRole()
-  const dealerName = getStoredDealerName()
-  const badgeLabel =
-    role === 'dealer' && dealerName
-      ? formatDisplayName(dealerName)
-      : role
-        ? (ROLE_LABELS[role] ?? role)
-        : null
   const displayName = formatDisplayName(name)
 
   function handleSignOut() {
@@ -87,7 +71,11 @@ export default function Header() {
     <header className="app-header">
       <div className="app-header-left">
         <h1 className="app-header-logo">Stock Your Lot</h1>
-        {badgeLabel && <span className="app-header-role">{badgeLabel}</span>}
+        {name && (
+          <Link to="/dealerships" className="app-header-dealerships">
+            Dealerships
+          </Link>
+        )}
       </div>
       {name && (
         <div className="app-header-right">

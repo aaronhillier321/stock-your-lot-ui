@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { getApiBase, setStoredToken, setStoredUserName, setStoredUserRole, setStoredDealerName, getLandingRoute } from './api'
+import { getApiBase, setStoredToken, setStoredUserName, setStoredUserRole, setStoredDealerName, getLandingRoute } from '../../api'
 import './Login.css'
 
 export default function Login() {
@@ -98,7 +98,7 @@ export default function Login() {
         </form>
 
         <p className="login-footer">
-          Don’t have an account? <Link to="/signup">Sign up</Link>
+          Don't have an account? <Link to="/signup">Sign up</Link>
         </p>
       </div>
     </div>
