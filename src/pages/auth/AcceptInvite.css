@@ -1,0 +1,127 @@
+.accept-invite {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.accept-invite-card {
+  width: 100%;
+  max-width: 440px;
+  padding: 40px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.accept-invite-title {
+  margin: 0 0 16px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.accept-invite-text {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.accept-invite-link {
+  display: inline-block;
+  margin-top: 20px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--header-blue);
+  text-decoration: none;
+}
+
+.accept-invite-link:hover {
+  text-decoration: underline;
+}
+
+.accept-invite-email {
+  margin: 0 0 20px;
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+}
+
+.accept-invite-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 24px;
+  text-align: left;
+}
+
+.accept-invite-label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.accept-invite-input {
+  width: 100%;
+  padding: 14px 16px;
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--text);
+  background: #f8f9fa;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.accept-invite-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.accept-invite-input:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.accept-invite-error {
+  padding: 12px 16px;
+  font-size: 0.875rem;
+  color: var(--error);
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: var(--radius-sm);
+}
+
+.accept-invite-button {
+  margin-top: 8px;
+  padding: 14px 24px;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  background: var(--header-blue);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.accept-invite-button:hover:not(:disabled) {
+  background: var(--header-blue-hover);
+}
+
+.accept-invite-button:disabled {
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
+.accept-invite-success .accept-invite-text {
+  color: var(--success, #059669);
+}

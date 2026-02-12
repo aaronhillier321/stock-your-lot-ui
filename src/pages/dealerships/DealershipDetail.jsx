@@ -64,10 +64,10 @@ export default function DealershipDetail() {
     setInviteSuccess('')
     setInviteSending(true)
     try {
-      const res = await authFetch(`${getApiBase()}/api/dealerships/${id}/invite`, {
+      const res = await authFetch(`${getApiBase()}/api/invites`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, dealershipId: id }),
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))

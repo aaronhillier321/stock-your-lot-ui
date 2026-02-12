@@ -1,10 +1,12 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { getApiBase, setStoredToken, setStoredUserName, setStoredUserRole, setStoredDealerName, getLandingRoute } from '../../api'
 import './Login.css'
 
 export default function Login() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const inviteAccepted = location.state?.inviteAccepted
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -56,6 +58,11 @@ export default function Login() {
         </div>
 
         <form className="login-form" onSubmit={handleSubmit}>
+          {inviteAccepted && (
+            <div className="login-success" role="status">
+              Your account is active. Sign in with your email and password.
+            </div>
+          )}
           {error && (
             <div className="login-error" role="alert">
               {error}
