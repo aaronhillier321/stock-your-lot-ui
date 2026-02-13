@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
-import { Navigate, Link } from 'react-router-dom'
+import { Navigate, Link, useNavigate } from 'react-router-dom'
 import { getApiBase, authFetch, getStoredToken } from '../../api'
 import './Purchases.css'
 
 export default function Purchases() {
+  const navigate = useNavigate()
   const token = getStoredToken()
   const [purchases, setPurchases] = useState([])
   const [loading, setLoading] = useState(true)
@@ -168,7 +169,19 @@ export default function Purchases() {
             </thead>
             <tbody>
               {filteredPurchases.map((p) => (
-                <tr key={p.id}>
+                <tr
+                  key={p.id}
+                  className="purchases-row-clickable"
+                  onClick={() => p.id != null && navigate(`/purchases/${p.id}`)}
+                  role={p.id != null ? 'button' : undefined}
+                  tabIndex={p.id != null ? 0 : undefined}
+                  onKeyDown={(e) => {
+                    if (p.id != null && (e.key === 'Enter' || e.key === ' ')) {
+                      e.preventDefault()
+                      navigate(`/purchases/${p.id}`)
+                    }
+                  }}
+                >
                   <td>{p.date ?? '—'}</td>
                   <td>{p.dealershipName ?? p.dealership ?? '—'}</td>
                   <td>{p.vin ?? '—'}</td>

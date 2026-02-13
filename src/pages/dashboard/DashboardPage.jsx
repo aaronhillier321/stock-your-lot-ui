@@ -211,7 +211,19 @@ export default function DashboardPage({ role }) {
                 </thead>
                 <tbody>
                   {filteredPurchases.map((p) => (
-                    <tr key={p.id}>
+                    <tr
+                      key={p.id}
+                      className="dashboard-admin-row-clickable"
+                      onClick={() => p.id != null && navigate(`/purchases/${p.id}`)}
+                      role={p.id != null ? 'button' : undefined}
+                      tabIndex={p.id != null ? 0 : undefined}
+                      onKeyDown={(e) => {
+                        if (p.id != null && (e.key === 'Enter' || e.key === ' ')) {
+                          e.preventDefault()
+                          navigate(`/purchases/${p.id}`)
+                        }
+                      }}
+                    >
                       <td>{p.date ?? '—'}</td>
                       <td>{p.dealershipName ?? p.dealership ?? '—'}</td>
                       <td>{p.vin ?? '—'}</td>

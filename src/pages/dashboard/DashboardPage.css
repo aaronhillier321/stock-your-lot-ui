@@ -180,3 +180,7 @@
 .dashboard-admin-table tbody tr:hover {
   background: #f8f9fa;
 }
+
+.dashboard-admin-row-clickable {
+  cursor: pointer;
+}

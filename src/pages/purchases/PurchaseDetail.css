@@ -1,0 +1,239 @@
+.purchase-detail-page {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.purchase-detail-top-bar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  gap: 12px;
+}
+
+.purchase-detail-back {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--header-blue);
+  text-decoration: none;
+}
+
+.purchase-detail-back:hover {
+  text-decoration: underline;
+}
+
+.purchase-detail-edit-btn {
+  padding: 8px 16px;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: white;
+  background: var(--header-blue);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.purchase-detail-edit-btn:hover {
+  background: var(--header-blue-hover);
+}
+
+.purchase-detail-edit-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.purchase-detail-cancel-btn {
+  padding: 8px 16px;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: var(--bg-page);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.purchase-detail-cancel-btn:hover:not(:disabled) {
+  border-color: var(--text-muted);
+  color: var(--text);
+}
+
+.purchase-detail-save-btn {
+  padding: 8px 16px;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: white;
+  background: var(--header-blue);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.purchase-detail-save-btn:hover:not(:disabled) {
+  background: var(--header-blue-hover);
+}
+
+.purchase-detail-save-btn:disabled,
+.purchase-detail-cancel-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.purchase-detail-header {
+  flex-shrink: 0;
+  margin-bottom: 16px;
+}
+
+.purchase-detail-title {
+  margin: 0 0 12px;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.purchase-detail-info-line {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.purchase-detail-section {
+  flex: 1;
+  min-height: 0;
+  margin-top: 16px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.purchase-detail-submit-error {
+  margin-bottom: 16px;
+  padding: 10px 12px;
+  font-size: 0.875rem;
+  color: var(--error);
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: var(--radius-sm);
+}
+
+/* Single two-column layout for view and edit – same structure so nothing jumps */
+.purchase-detail-form {
+  max-width: 100%;
+}
+
+.purchase-detail-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px 48px;
+  max-width: 900px;
+}
+
+.purchase-detail-col {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.purchase-detail-dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 130px minmax(0, 1fr);
+  gap: 8px 20px;
+  font-size: 0.9375rem;
+  align-items: start;
+}
+
+.purchase-detail-dl dt {
+  margin: 0;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.purchase-detail-dd {
+  margin: 0;
+  color: var(--text);
+  min-height: 2.25rem;
+  display: flex;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.purchase-detail-dd .purchase-detail-vehicle-fields {
+  align-self: flex-start;
+}
+
+.purchase-detail-dd .purchase-detail-input {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.purchase-detail-link {
+  color: var(--header-blue);
+  text-decoration: none;
+}
+
+.purchase-detail-link:hover {
+  text-decoration: underline;
+}
+
+/* In-place inputs: same row height, no overflow */
+.purchase-detail-input {
+  padding: 6px 10px;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  color: var(--text);
+  background: var(--bg-page);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.purchase-detail-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+.purchase-detail-input-sm {
+  max-width: 5rem;
+}
+
+.purchase-detail-vehicle-fields {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-width: 0;
+  width: 100%;
+}
+
+.purchase-detail-vehicle-fields .purchase-detail-input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.purchase-detail-vehicle-fields .purchase-detail-input-sm {
+  flex: 0 0 5rem;
+}
+
+.purchase-detail-loading,
+.purchase-detail-error {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text-muted);
+}
+
+.purchase-detail-error {
+  color: var(--error);
+  margin-bottom: 16px;
+}

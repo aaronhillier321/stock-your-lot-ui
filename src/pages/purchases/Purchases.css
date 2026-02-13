@@ -155,3 +155,7 @@
 .purchases-table tbody tr:hover {
   background: #f8f9fa;
 }
+
+.purchases-row-clickable {
+  cursor: pointer;
+}
