@@ -78,7 +78,7 @@ export default function Purchases() {
                 {purchases.map((p) => (
                   <tr key={p.id}>
                     <td>{p.date ?? '—'}</td>
-                    <td>{p.dealership ?? '—'}</td>
+                    <td>{p.dealershipName ?? p.dealership ?? '—'}</td>
                     <td>{p.vin ?? '—'}</td>
                     <td>{[p.vehicleYear, p.vehicleMake, p.vehicleModel].filter(Boolean).join(' ') || '—'}</td>
                     <td>{p.miles != null ? p.miles.toLocaleString() : '—'}</td>

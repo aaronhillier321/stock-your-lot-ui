@@ -14,6 +14,8 @@ export default function DealershipDetail() {
   const [inviteSending, setInviteSending] = useState(false)
   const [inviteError, setInviteError] = useState('')
   const [inviteSuccess, setInviteSuccess] = useState('')
+  const [purchases, setPurchases] = useState([])
+  const [purchasesLoading, setPurchasesLoading] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -45,6 +47,24 @@ export default function DealershipDetail() {
       }
     }
     fetchDealership()
+    return () => { cancelled = true }
+  }, [id, token])
+
+  useEffect(() => {
+    if (!id || !token) return
+    let cancelled = false
+    setPurchasesLoading(true)
+    async function fetchPurchases() {
+      try {
+        const res = await authFetch(`${getApiBase()}/api/dealerships/${id}/purchases`)
+        if (res.ok && !cancelled) {
+          const data = await res.json()
+          setPurchases(Array.isArray(data) ? data : [])
+        }
+      } catch (_) {}
+      if (!cancelled) setPurchasesLoading(false)
+    }
+    fetchPurchases()
     return () => { cancelled = true }
   }, [id, token])
 
@@ -106,38 +126,53 @@ export default function DealershipDetail() {
       <div className="dealership-detail-card">
         <Link to="/dealerships" className="dealership-detail-back">← Back to dealerships</Link>
         <h2 className="dealership-detail-title">{dealership.name ?? 'Dealership'}</h2>
-        <dl className="dealership-detail-info">
-          {dealership.address != null && dealership.address !== '' && (
-            <>
-              <dt>Address</dt>
-              <dd>{dealership.address}</dd>
-            </>
+        <p className="dealership-detail-info-line">
+          {[
+            dealership.addressLine1 ?? dealership.address,
+            [dealership.city, dealership.state, dealership.postalCode ?? dealership.zip].filter(Boolean).join(', '),
+            dealership.phone,
+          ].filter(Boolean).join(' · ') || '—'}
+        </p>
+
+        <section className="dealership-detail-section">
+          <h3 className="dealership-detail-section-title">Purchases</h3>
+          {purchasesLoading ? (
+            <p className="dealership-detail-loading">Loading purchases…</p>
+          ) : purchases.length === 0 ? (
+            <p className="dealership-detail-empty">No purchases for this dealership.</p>
+          ) : (
+            <div className="dealership-detail-table-wrap">
+              <table className="dealership-detail-purchases-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Auction Platform</th>
+                    <th>VIN</th>
+                    <th>Vehicle</th>
+                    <th>Trim</th>
+                    <th>Miles</th>
+                    <th>Purchase Price</th>
+                    <th>Transport Quote</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {purchases.map((p) => (
+                    <tr key={p.id}>
+                      <td>{p.date ?? '—'}</td>
+                      <td>{p.auctionPlatform ?? '—'}</td>
+                      <td>{p.vin ?? '—'}</td>
+                      <td>{[p.vehicleYear, p.vehicleMake, p.vehicleModel].filter(Boolean).join(' ') || '—'}</td>
+                      <td>{p.vehicleTrimLevel ?? '—'}</td>
+                      <td>{p.miles != null ? p.miles.toLocaleString() : '—'}</td>
+                      <td>{p.purchasePrice != null ? `$${Number(p.purchasePrice).toLocaleString()}` : '—'}</td>
+                      <td>{p.transportQuote != null ? `$${Number(p.transportQuote).toLocaleString()}` : '—'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
-          {dealership.city != null && dealership.city !== '' && (
-            <>
-              <dt>City</dt>
-              <dd>{dealership.city}</dd>
-            </>
-          )}
-          {dealership.state != null && dealership.state !== '' && (
-            <>
-              <dt>State</dt>
-              <dd>{dealership.state}</dd>
-            </>
-          )}
-          {dealership.zip != null && dealership.zip !== '' && (
-            <>
-              <dt>ZIP</dt>
-              <dd>{dealership.zip}</dd>
-            </>
-          )}
-          {dealership.phone != null && dealership.phone !== '' && (
-            <>
-              <dt>Phone</dt>
-              <dd>{dealership.phone}</dd>
-            </>
-          )}
-        </dl>
+        </section>
 
         <section className="dealership-detail-invite-section">
           <button type="button" className="dealership-detail-add-user-btn" onClick={() => { setInviteError(''); setInviteSuccess(''); setShowInviteModal(true); }}>

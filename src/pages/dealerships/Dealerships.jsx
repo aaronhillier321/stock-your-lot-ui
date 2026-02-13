@@ -60,10 +60,10 @@ export default function Dealerships() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: formData.name.trim(),
-          address: formData.address?.trim() || null,
+          addressLine1: formData.address?.trim() || null,
           city: formData.city?.trim() || null,
           state: formData.state?.trim() || null,
-          zip: formData.zip?.trim() || null,
+          postalCode: formData.zip?.trim() || null,
           phone: formData.phone?.trim() || null,
         }),
       })
@@ -216,10 +216,10 @@ export default function Dealerships() {
                     }}
                   >
                     <td>{d.name ?? '—'}</td>
-                    <td>{d.address ?? '—'}</td>
+                    <td>{d.addressLine1 ?? d.address ?? '—'}</td>
                     <td>{d.city ?? '—'}</td>
                     <td>{d.state ?? '—'}</td>
-                    <td>{d.zip ?? '—'}</td>
+                    <td>{d.postalCode ?? d.zip ?? '—'}</td>
                     <td>{d.phone ?? '—'}</td>
                   </tr>
                 ))}

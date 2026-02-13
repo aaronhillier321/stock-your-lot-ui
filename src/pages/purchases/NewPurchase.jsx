@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Navigate, Link, useNavigate } from 'react-router-dom'
 import { getApiBase, authFetch, getStoredToken } from '../../api'
 import './NewPurchase.css'
 
 const emptyForm = {
-  dealership: '',
+  dealershipId: '',
   date: '',
   auctionPlatform: '',
   vin: '',
@@ -20,9 +20,28 @@ const emptyForm = {
 export default function NewPurchase() {
   const navigate = useNavigate()
   const token = getStoredToken()
+  const [dealerships, setDealerships] = useState([])
+  const [dealershipsLoading, setDealershipsLoading] = useState(true)
   const [formData, setFormData] = useState(emptyForm)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
+
+  useEffect(() => {
+    if (!token) return
+    let cancelled = false
+    async function fetchDealerships() {
+      try {
+        const res = await authFetch(`${getApiBase()}/api/dealerships`)
+        if (res.ok && !cancelled) {
+          const data = await res.json()
+          setDealerships(Array.isArray(data) ? data : [])
+        }
+      } catch (_) {}
+      if (!cancelled) setDealershipsLoading(false)
+    }
+    fetchDealerships()
+    return () => { cancelled = true }
+  }, [token])
 
   function update(field, value) {
     setFormData((prev) => ({ ...prev, [field]: value }))
@@ -31,10 +50,14 @@ export default function NewPurchase() {
   async function handleConfirm(e) {
     e.preventDefault()
     setError('')
+    if (!formData.dealershipId?.trim()) {
+      setError('Please select a dealership.')
+      return
+    }
     setSubmitting(true)
     try {
       const body = {
-        dealership: formData.dealership?.trim() || null,
+        dealershipId: formData.dealershipId.trim(),
         date: formData.date || null,
         auctionPlatform: formData.auctionPlatform?.trim() || null,
         vin: formData.vin?.trim() || null,
@@ -80,13 +103,20 @@ export default function NewPurchase() {
           )}
           <label className="new-purchase-label">
             Dealership
-            <input
-              type="text"
-              className="new-purchase-input"
-              value={formData.dealership}
-              onChange={(e) => update('dealership', e.target.value)}
-              placeholder="Dealership name"
-            />
+            <select
+              className="new-purchase-input new-purchase-select"
+              value={formData.dealershipId}
+              onChange={(e) => update('dealershipId', e.target.value)}
+              required
+              disabled={dealershipsLoading}
+            >
+              <option value="">Select dealership</option>
+              {dealerships.map((d) => (
+                <option key={d.id} value={d.id}>
+                  {d.name ?? d.id}
+                </option>
+              ))}
+            </select>
           </label>
 
           <label className="new-purchase-label">
