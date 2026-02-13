@@ -80,7 +80,7 @@ export default function Purchases() {
                     <td>{p.date ?? '—'}</td>
                     <td>{p.dealership ?? '—'}</td>
                     <td>{p.vin ?? '—'}</td>
-                    <td>{[p.vehicleYear, p.vehicleMake, p.vehicleModel].filter(Boolean).join(' ') || p.ymmt || '—'}</td>
+                    <td>{[p.vehicleYear, p.vehicleMake, p.vehicleModel].filter(Boolean).join(' ') || '—'}</td>
                     <td>{p.miles != null ? p.miles.toLocaleString() : '—'}</td>
                     <td>{p.purchasePrice != null ? `$${Number(p.purchasePrice).toLocaleString()}` : '—'}</td>
                   </tr>

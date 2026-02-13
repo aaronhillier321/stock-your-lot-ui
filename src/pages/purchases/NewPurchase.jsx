@@ -8,7 +8,6 @@ const emptyForm = {
   date: '',
   auctionPlatform: '',
   vin: '',
-  ymmt: '',
   miles: '',
   purchasePrice: '',
   vehicleYear: '',
@@ -39,7 +38,6 @@ export default function NewPurchase() {
         date: formData.date || null,
         auctionPlatform: formData.auctionPlatform?.trim() || null,
         vin: formData.vin?.trim() || null,
-        ymmt: formData.ymmt?.trim() || null,
         miles: formData.miles === '' ? null : Number(formData.miles),
         purchasePrice: formData.purchasePrice === '' ? null : Number(formData.purchasePrice),
         vehicleYear: formData.vehicleYear?.trim() || null,
@@ -121,17 +119,6 @@ export default function NewPurchase() {
               onChange={(e) => update('vin', e.target.value)}
               placeholder="17-character VIN"
               maxLength={17}
-            />
-          </label>
-
-          <label className="new-purchase-label">
-            YMMT
-            <input
-              type="text"
-              className="new-purchase-input"
-              value={formData.ymmt}
-              onChange={(e) => update('ymmt', e.target.value)}
-              placeholder="Year / Make / Model / Trim"
             />
           </label>
 

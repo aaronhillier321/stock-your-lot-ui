@@ -8,7 +8,7 @@
 
 .new-purchase-card {
   width: 100%;
-  max-width: 560px;
+  max-width: 720px;
   padding: 32px;
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -43,12 +43,17 @@
   background: #fef2f2;
   border: 1px solid #fecaca;
   border-radius: var(--radius-sm);
+  grid-column: 1 / -1;
 }
 
 .new-purchase-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 24px;
+}
+
+.new-purchase-form .new-purchase-actions {
+  grid-column: 1 / -1;
 }
 
 .new-purchase-label {
@@ -122,4 +127,10 @@
 
 .new-purchase-confirm:hover {
   background: var(--header-blue-hover);
+}
+
+@media (max-width: 560px) {
+  .new-purchase-form {
+    grid-template-columns: 1fr;
+  }
 }
