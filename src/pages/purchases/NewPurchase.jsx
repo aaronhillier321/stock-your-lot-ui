@@ -92,7 +92,7 @@ export default function NewPurchase() {
   return (
     <div className="new-purchase-page">
       <div className="new-purchase-card">
-        <Link to="/purchases" className="new-purchase-back">← Back to Purchases</Link>
+        <Link to="/purchases" className="new-purchase-back">← Back to My Purchases</Link>
         <h2 className="new-purchase-title">New Purchase</h2>
 
         <form className="new-purchase-form" onSubmit={handleConfirm}>

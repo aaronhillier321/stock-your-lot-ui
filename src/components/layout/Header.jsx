@@ -76,10 +76,13 @@ export default function Header() {
         {name && (
           <>
             <Link to="/purchases" className="app-header-nav">
-              Purchases
+              My Purchases
             </Link>
             <Link to="/dealerships" className="app-header-nav">
               Dealerships
+            </Link>
+            <Link to="/admin" className="app-header-nav">
+              Admin
             </Link>
           </>
         )}

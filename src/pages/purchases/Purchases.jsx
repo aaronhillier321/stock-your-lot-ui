@@ -58,7 +58,7 @@ export default function Purchases() {
         if (!cancelled) setPurchases(Array.isArray(data) ? data : [])
       } catch (err) {
         if (!cancelled) {
-          setError(err.message || 'Failed to load purchases')
+          setError(err.message || 'Failed to load your purchases')
           setPurchases([])
         }
       } finally {
@@ -74,7 +74,7 @@ export default function Purchases() {
   return (
     <div className="purchases-page">
       <div className="purchases-header">
-        <h2 className="purchases-title">Purchases</h2>
+        <h2 className="purchases-title">My Purchases</h2>
         <Link to="/purchases/new" className="purchases-new-btn">
           New Purchase
         </Link>
@@ -88,9 +88,9 @@ export default function Purchases() {
 
       <div className="purchases-body">
         {loading ? (
-          <p className="purchases-loading">Loading purchases…</p>
-        ) : purchases.length === 0 ? (
-          <p className="purchases-empty">No purchases yet. Click “New Purchase” to add one.</p>
+<p className="purchases-loading">Loading your purchases…</p>
+          ) : purchases.length === 0 ? (
+            <p className="purchases-empty">No purchases yet. Click “New Purchase” to add one.</p>
         ) : (
           <div className="purchases-table-wrap">
             <table className="purchases-table">
