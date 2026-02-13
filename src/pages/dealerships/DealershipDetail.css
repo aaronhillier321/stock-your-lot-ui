@@ -1,25 +1,27 @@
 .dealership-detail-page {
   width: 100%;
-  padding: 24px;
+  flex: 1;
+  min-height: 0;
+  padding: 5px;
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  flex-direction: column;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-.dealership-detail-card {
-  width: 100%;
-  max-width: 960px;
-  padding: 32px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+.dealership-detail-top-bar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
 }
 
 .dealership-detail-back {
+  flex-shrink: 0;
   display: inline-block;
-  margin-bottom: 20px;
-  font-size: 0.9375rem;
+  margin: 0;
+  font-size: 0.875rem;
   font-weight: 500;
   color: var(--header-blue);
   text-decoration: none;
@@ -29,31 +31,51 @@
   text-decoration: underline;
 }
 
+.dealership-detail-header {
+  flex-shrink: 0;
+  margin-bottom: 16px;
+}
+
 .dealership-detail-title {
-  margin: 0 0 8px;
-  font-size: 1.5rem;
+  flex-shrink: 0;
+  margin: 0 0 12px;
+  font-size: 1.75rem;
   font-weight: 700;
   color: var(--text);
 }
 
 .dealership-detail-info-line {
-  margin: 0 0 24px;
-  font-size: 0.875rem;
+  flex-shrink: 0;
+  margin: 0;
+  font-size: 0.9375rem;
   color: var(--text-muted);
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 .dealership-detail-section {
-  margin-top: 28px;
-  padding-top: 24px;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  margin-top: 16px;
+  padding-top: 20px;
   border-top: 1px solid var(--border);
 }
 
 .dealership-detail-section-title {
-  margin: 0 0 16px;
-  font-size: 1.125rem;
+  flex-shrink: 0;
+  margin: 0 0 20px;
+  font-size: 1.25rem;
   font-weight: 600;
   color: var(--text);
+}
+
+.dealership-detail-table-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .dealership-detail-empty {
@@ -63,13 +85,63 @@
 }
 
 .dealership-detail-table-wrap {
-  overflow-x: auto;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  margin-bottom: 24px;
 }
 
+/* Block layout so sticky thead works; grid on rows for column alignment */
 .dealership-detail-purchases-table {
   width: 100%;
-  border-collapse: collapse;
   font-size: 0.875rem;
+  display: block;
+}
+
+.dealership-detail-purchases-table thead {
+  display: block;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #f8f9fa;
+  box-shadow: 0 1px 0 var(--border);
+}
+
+.dealership-detail-filter-row th {
+  padding: 6px 8px;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--border);
+}
+
+.dealership-detail-filter-input {
+  width: 100%;
+  padding: 6px 8px;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  color: var(--text);
+  background: var(--bg-page);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-sizing: border-box;
+}
+
+.dealership-detail-filter-input::placeholder {
+  color: var(--text-muted);
+}
+
+.dealership-detail-filter-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+.dealership-detail-purchases-table tbody {
+  display: block;
+}
+
+.dealership-detail-purchases-table tr {
+  display: grid;
+  grid-template-columns: 0.9fr 1fr 1fr 1.5fr 0.7fr 0.7fr 1fr 1fr;
 }
 
 .dealership-detail-purchases-table th,
@@ -87,12 +159,6 @@
 
 .dealership-detail-purchases-table tbody tr:hover {
   background: #f8f9fa;
-}
-
-.dealership-detail-invite-section {
-  margin-top: 28px;
-  padding-top: 24px;
-  border-top: 1px solid var(--border);
 }
 
 .dealership-detail-add-user-btn {
@@ -276,5 +342,5 @@
 
 .dealership-detail-error {
   color: var(--error);
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }

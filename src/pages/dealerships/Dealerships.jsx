@@ -19,6 +19,40 @@ export default function Dealerships() {
     zip: '',
     phone: '',
   })
+  const [filter, setFilter] = useState({
+    name: '',
+    address: '',
+    city: '',
+    state: '',
+    zip: '',
+    phone: '',
+    purchases: '',
+  })
+
+  const filteredDealerships = dealerships.filter((d) => {
+    const name = (d.name ?? '').toString().toLowerCase()
+    const address = (d.addressLine1 ?? d.address ?? '').toString().toLowerCase()
+    const city = (d.city ?? '').toString().toLowerCase()
+    const state = (d.state ?? '').toString().toLowerCase()
+    const zip = (d.postalCode ?? d.zip ?? '').toString().toLowerCase()
+    const phone = (d.phone ?? '').toString().toLowerCase()
+    const purchasesStr = (d.id != null ? (d.purchaseCount ?? d.purchase_count ?? 0) : '').toString()
+    const fn = (filter.name ?? '').trim().toLowerCase()
+    const fa = (filter.address ?? '').trim().toLowerCase()
+    const fc = (filter.city ?? '').trim().toLowerCase()
+    const fst = (filter.state ?? '').trim().toLowerCase()
+    const fz = (filter.zip ?? '').trim().toLowerCase()
+    const fph = (filter.phone ?? '').trim().toLowerCase()
+    const fp = (filter.purchases ?? '').trim()
+    if (fn && !name.includes(fn)) return false
+    if (fa && !address.includes(fa)) return false
+    if (fc && !city.includes(fc)) return false
+    if (fst && !state.includes(fst)) return false
+    if (fz && !zip.includes(fz)) return false
+    if (fph && !phone.includes(fph)) return false
+    if (fp && !purchasesStr.includes(fp)) return false
+    return true
+  })
 
   async function fetchList() {
     setLoading(true)
@@ -86,22 +120,21 @@ export default function Dealerships() {
 
   return (
     <div className="dealerships-page">
-      <div className="dealerships-card">
-        <div className="dealerships-header">
-          <h2 className="dealerships-title">Dealerships</h2>
-          <button type="button" className="dealerships-add-btn" onClick={() => setShowForm(true)}>
-            Add dealership
-          </button>
+      <div className="dealerships-header">
+        <h2 className="dealerships-title">Dealerships</h2>
+        <button type="button" className="dealerships-add-btn" onClick={() => setShowForm(true)}>
+          Add dealership
+        </button>
+      </div>
+
+      {error && (
+        <div className="dealerships-error" role="alert">
+          {error}
         </div>
+      )}
 
-        {error && (
-          <div className="dealerships-error" role="alert">
-            {error}
-          </div>
-        )}
-
-        {showForm && (
-          <form className="dealerships-form" onSubmit={handleSubmit}>
+      {showForm && (
+        <form className="dealerships-form" onSubmit={handleSubmit}>
             <h3 className="dealerships-form-title">New dealership</h3>
             <label className="dealerships-label">
               Name <span className="dealerships-required">*</span>
@@ -183,14 +216,87 @@ export default function Dealerships() {
           </form>
         )}
 
-        {loading ? (
-          <p className="dealerships-loading">Loading dealerships…</p>
-        ) : dealerships.length === 0 ? (
-          <p className="dealerships-empty">No dealerships yet. Click "Add dealership" to create one.</p>
-        ) : (
-          <div className="dealerships-table-wrap">
-            <table className="dealerships-table">
+        <div className="dealerships-body">
+          {loading ? (
+            <p className="dealerships-loading">Loading dealerships…</p>
+          ) : dealerships.length === 0 ? (
+            <p className="dealerships-empty">No dealerships yet. Click "Add dealership" to create one.</p>
+          ) : (
+            <div className="dealerships-table-wrap">
+              <table className="dealerships-table">
               <thead>
+                <tr className="dealerships-filter-row">
+                  <th>
+                    <input
+                      type="text"
+                      className="dealerships-filter-input"
+                      placeholder="Filter…"
+                      value={filter.name}
+                      onChange={(e) => setFilter((f) => ({ ...f, name: e.target.value }))}
+                      aria-label="Filter by name"
+                    />
+                  </th>
+                  <th>
+                    <input
+                      type="text"
+                      className="dealerships-filter-input"
+                      placeholder="Filter…"
+                      value={filter.address}
+                      onChange={(e) => setFilter((f) => ({ ...f, address: e.target.value }))}
+                      aria-label="Filter by address"
+                    />
+                  </th>
+                  <th>
+                    <input
+                      type="text"
+                      className="dealerships-filter-input"
+                      placeholder="Filter…"
+                      value={filter.city}
+                      onChange={(e) => setFilter((f) => ({ ...f, city: e.target.value }))}
+                      aria-label="Filter by city"
+                    />
+                  </th>
+                  <th>
+                    <input
+                      type="text"
+                      className="dealerships-filter-input"
+                      placeholder="Filter…"
+                      value={filter.state}
+                      onChange={(e) => setFilter((f) => ({ ...f, state: e.target.value }))}
+                      aria-label="Filter by state"
+                    />
+                  </th>
+                  <th>
+                    <input
+                      type="text"
+                      className="dealerships-filter-input"
+                      placeholder="Filter…"
+                      value={filter.zip}
+                      onChange={(e) => setFilter((f) => ({ ...f, zip: e.target.value }))}
+                      aria-label="Filter by ZIP"
+                    />
+                  </th>
+                  <th>
+                    <input
+                      type="text"
+                      className="dealerships-filter-input"
+                      placeholder="Filter…"
+                      value={filter.phone}
+                      onChange={(e) => setFilter((f) => ({ ...f, phone: e.target.value }))}
+                      aria-label="Filter by phone"
+                    />
+                  </th>
+                  <th>
+                    <input
+                      type="text"
+                      className="dealerships-filter-input"
+                      placeholder="Filter…"
+                      value={filter.purchases}
+                      onChange={(e) => setFilter((f) => ({ ...f, purchases: e.target.value }))}
+                      aria-label="Filter by purchases"
+                    />
+                  </th>
+                </tr>
                 <tr>
                   <th>Name</th>
                   <th>Address</th>
@@ -198,10 +304,11 @@ export default function Dealerships() {
                   <th>State</th>
                   <th>ZIP</th>
                   <th>Phone</th>
+                  <th>Purchases</th>
                 </tr>
               </thead>
               <tbody>
-                {dealerships.map((d) => (
+                {filteredDealerships.map((d) => (
                   <tr
                     key={d.id ?? d.name}
                     className="dealerships-row-clickable"
@@ -221,13 +328,14 @@ export default function Dealerships() {
                     <td>{d.state ?? '—'}</td>
                     <td>{d.postalCode ?? d.zip ?? '—'}</td>
                     <td>{d.phone ?? '—'}</td>
+                    <td>{d.id != null ? (d.purchaseCount ?? d.purchase_count ?? 0) : '—'}</td>
                   </tr>
                 ))}
               </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+              </table>
+            </div>
+          )}
+        </div>
     </div>
   )
 }

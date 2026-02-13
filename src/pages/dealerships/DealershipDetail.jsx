@@ -16,6 +16,44 @@ export default function DealershipDetail() {
   const [inviteSuccess, setInviteSuccess] = useState('')
   const [purchases, setPurchases] = useState([])
   const [purchasesLoading, setPurchasesLoading] = useState(false)
+  const [filter, setFilter] = useState({
+    date: '',
+    auctionPlatform: '',
+    vin: '',
+    vehicle: '',
+    trim: '',
+    miles: '',
+    purchasePrice: '',
+    transportQuote: '',
+  })
+
+  const filteredPurchases = purchases.filter((p) => {
+    const dateStr = (p.date ?? '').toString().toLowerCase()
+    const auctionStr = (p.auctionPlatform ?? '').toString().toLowerCase()
+    const vinStr = (p.vin ?? '').toString().toLowerCase()
+    const vehicleStr = [p.vehicleYear, p.vehicleMake, p.vehicleModel].filter(Boolean).join(' ').toLowerCase()
+    const trimStr = (p.vehicleTrimLevel ?? '').toString().toLowerCase()
+    const milesStr = (p.miles != null ? p.miles.toLocaleString() : '').toString()
+    const priceStr = (p.purchasePrice != null ? `$${Number(p.purchasePrice).toLocaleString()}` : '').toString()
+    const transportStr = (p.transportQuote != null ? `$${Number(p.transportQuote).toLocaleString()}` : '').toString()
+    const fd = (filter.date ?? '').trim().toLowerCase()
+    const fa = (filter.auctionPlatform ?? '').trim().toLowerCase()
+    const fv = (filter.vin ?? '').trim().toLowerCase()
+    const fveh = (filter.vehicle ?? '').trim().toLowerCase()
+    const ft = (filter.trim ?? '').trim().toLowerCase()
+    const fm = (filter.miles ?? '').trim()
+    const fp = (filter.purchasePrice ?? '').trim()
+    const fq = (filter.transportQuote ?? '').trim()
+    if (fd && !dateStr.includes(fd)) return false
+    if (fa && !auctionStr.includes(fa)) return false
+    if (fv && !vinStr.includes(fv)) return false
+    if (fveh && !vehicleStr.includes(fveh)) return false
+    if (ft && !trimStr.includes(ft)) return false
+    if (fm && !milesStr.includes(fm)) return false
+    if (fp && !priceStr.includes(fp)) return false
+    if (fq && !transportStr.includes(fq)) return false
+    return true
+  })
 
   useEffect(() => {
     let cancelled = false
@@ -108,14 +146,12 @@ export default function DealershipDetail() {
   }
 
   if (!token) return <Navigate to="/" replace />
-  if (loading) return <div className="dealership-detail-page"><div className="dealership-detail-card"><p className="dealership-detail-loading">Loading…</p></div></div>
+  if (loading) return <div className="dealership-detail-page"><p className="dealership-detail-loading">Loading…</p></div>
   if (error && !dealership) {
     return (
       <div className="dealership-detail-page">
-        <div className="dealership-detail-card">
-          <p className="dealership-detail-error">{error}</p>
-          <Link to="/dealerships" className="dealership-detail-back">← Back to dealerships</Link>
-        </div>
+        <p className="dealership-detail-error">{error}</p>
+        <Link to="/dealerships" className="dealership-detail-back">← Back to dealerships</Link>
       </div>
     )
   }
@@ -123,8 +159,13 @@ export default function DealershipDetail() {
 
   return (
     <div className="dealership-detail-page">
-      <div className="dealership-detail-card">
+      <div className="dealership-detail-top-bar">
         <Link to="/dealerships" className="dealership-detail-back">← Back to dealerships</Link>
+        <button type="button" className="dealership-detail-add-user-btn" onClick={() => { setInviteError(''); setInviteSuccess(''); setShowInviteModal(true); }}>
+          Add User
+        </button>
+      </div>
+      <header className="dealership-detail-header">
         <h2 className="dealership-detail-title">{dealership.name ?? 'Dealership'}</h2>
         <p className="dealership-detail-info-line">
           {[
@@ -133,9 +174,11 @@ export default function DealershipDetail() {
             dealership.phone,
           ].filter(Boolean).join(' · ') || '—'}
         </p>
+      </header>
 
-        <section className="dealership-detail-section">
-          <h3 className="dealership-detail-section-title">Purchases</h3>
+      <section className="dealership-detail-section">
+        <h3 className="dealership-detail-section-title">Purchases</h3>
+        <div className="dealership-detail-table-body">
           {purchasesLoading ? (
             <p className="dealership-detail-loading">Loading purchases…</p>
           ) : purchases.length === 0 ? (
@@ -143,43 +186,119 @@ export default function DealershipDetail() {
           ) : (
             <div className="dealership-detail-table-wrap">
               <table className="dealership-detail-purchases-table">
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Auction Platform</th>
-                    <th>VIN</th>
-                    <th>Vehicle</th>
-                    <th>Trim</th>
-                    <th>Miles</th>
-                    <th>Purchase Price</th>
-                    <th>Transport Quote</th>
+              <thead>
+                <tr className="dealership-detail-filter-row">
+                  <th>
+                    <input
+                      type="text"
+                      className="dealership-detail-filter-input"
+                      placeholder="Filter…"
+                      value={filter.date}
+                      onChange={(e) => setFilter((f) => ({ ...f, date: e.target.value }))}
+                      aria-label="Filter by date"
+                    />
+                  </th>
+                  <th>
+                    <input
+                      type="text"
+                      className="dealership-detail-filter-input"
+                      placeholder="Filter…"
+                      value={filter.auctionPlatform}
+                      onChange={(e) => setFilter((f) => ({ ...f, auctionPlatform: e.target.value }))}
+                      aria-label="Filter by auction platform"
+                    />
+                  </th>
+                  <th>
+                    <input
+                      type="text"
+                      className="dealership-detail-filter-input"
+                      placeholder="Filter…"
+                      value={filter.vin}
+                      onChange={(e) => setFilter((f) => ({ ...f, vin: e.target.value }))}
+                      aria-label="Filter by VIN"
+                    />
+                  </th>
+                  <th>
+                    <input
+                      type="text"
+                      className="dealership-detail-filter-input"
+                      placeholder="Filter…"
+                      value={filter.vehicle}
+                      onChange={(e) => setFilter((f) => ({ ...f, vehicle: e.target.value }))}
+                      aria-label="Filter by vehicle"
+                    />
+                  </th>
+                  <th>
+                    <input
+                      type="text"
+                      className="dealership-detail-filter-input"
+                      placeholder="Filter…"
+                      value={filter.trim}
+                      onChange={(e) => setFilter((f) => ({ ...f, trim: e.target.value }))}
+                      aria-label="Filter by trim"
+                    />
+                  </th>
+                  <th>
+                    <input
+                      type="text"
+                      className="dealership-detail-filter-input"
+                      placeholder="Filter…"
+                      value={filter.miles}
+                      onChange={(e) => setFilter((f) => ({ ...f, miles: e.target.value }))}
+                      aria-label="Filter by miles"
+                    />
+                  </th>
+                  <th>
+                    <input
+                      type="text"
+                      className="dealership-detail-filter-input"
+                      placeholder="Filter…"
+                      value={filter.purchasePrice}
+                      onChange={(e) => setFilter((f) => ({ ...f, purchasePrice: e.target.value }))}
+                      aria-label="Filter by purchase price"
+                    />
+                  </th>
+                  <th>
+                    <input
+                      type="text"
+                      className="dealership-detail-filter-input"
+                      placeholder="Filter…"
+                      value={filter.transportQuote}
+                      onChange={(e) => setFilter((f) => ({ ...f, transportQuote: e.target.value }))}
+                      aria-label="Filter by transport quote"
+                    />
+                  </th>
+                </tr>
+                <tr>
+                  <th>Date</th>
+                  <th>Auction Platform</th>
+                  <th>VIN</th>
+                  <th>Vehicle</th>
+                  <th>Trim</th>
+                  <th>Miles</th>
+                  <th>Purchase Price</th>
+                  <th>Transport Quote</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredPurchases.map((p) => (
+                  <tr key={p.id}>
+                    <td>{p.date ?? '—'}</td>
+                    <td>{p.auctionPlatform ?? '—'}</td>
+                    <td>{p.vin ?? '—'}</td>
+                    <td>{[p.vehicleYear, p.vehicleMake, p.vehicleModel].filter(Boolean).join(' ') || '—'}</td>
+                    <td>{p.vehicleTrimLevel ?? '—'}</td>
+                    <td>{p.miles != null ? p.miles.toLocaleString() : '—'}</td>
+                    <td>{p.purchasePrice != null ? `$${Number(p.purchasePrice).toLocaleString()}` : '—'}</td>
+                    <td>{p.transportQuote != null ? `$${Number(p.transportQuote).toLocaleString()}` : '—'}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {purchases.map((p) => (
-                    <tr key={p.id}>
-                      <td>{p.date ?? '—'}</td>
-                      <td>{p.auctionPlatform ?? '—'}</td>
-                      <td>{p.vin ?? '—'}</td>
-                      <td>{[p.vehicleYear, p.vehicleMake, p.vehicleModel].filter(Boolean).join(' ') || '—'}</td>
-                      <td>{p.vehicleTrimLevel ?? '—'}</td>
-                      <td>{p.miles != null ? p.miles.toLocaleString() : '—'}</td>
-                      <td>{p.purchasePrice != null ? `$${Number(p.purchasePrice).toLocaleString()}` : '—'}</td>
-                      <td>{p.transportQuote != null ? `$${Number(p.transportQuote).toLocaleString()}` : '—'}</td>
-                    </tr>
-                  ))}
-                </tbody>
+                ))}
+              </tbody>
               </table>
             </div>
           )}
-        </section>
-
-        <section className="dealership-detail-invite-section">
-          <button type="button" className="dealership-detail-add-user-btn" onClick={() => { setInviteError(''); setInviteSuccess(''); setShowInviteModal(true); }}>
-            Add User
-          </button>
-        </section>
-      </div>
+        </div>
+      </section>
 
       {showInviteModal && (
         <div className="dealership-detail-modal-backdrop" onClick={() => setShowInviteModal(false)} aria-hidden>
