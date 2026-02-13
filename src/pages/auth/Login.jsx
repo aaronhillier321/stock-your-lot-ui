@@ -1,13 +1,18 @@
 import { useState } from 'react'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { getApiBase, setStoredToken, setStoredUserName, setStoredUserRole, setStoredDealerName, getLandingRoute } from '../../api'
+import { Link, useNavigate, useLocation, Navigate } from 'react-router-dom'
+import { getApiBase, getStoredToken, setStoredToken, setStoredUserName, setStoredUserRole, setStoredDealerName, getLandingRoute } from '../../api'
 import './Login.css'
 
 export default function Login() {
   const navigate = useNavigate()
   const location = useLocation()
+  const token = getStoredToken()
   const inviteAccepted = location.state?.inviteAccepted
   const [email, setEmail] = useState('')
+
+  if (token) {
+    return <Navigate to="/purchases" replace />
+  }
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -41,7 +46,7 @@ export default function Login() {
       if (dealerName != null) setStoredDealerName(dealerName)
       const landingRole = getLandingRoute(data.roles, data.dealershipRoles)
       setStoredUserRole(landingRole)
-      navigate(`/${landingRole}`, { state: { name: data.username, email: data.email } })
+      navigate('/purchases', { state: { name: data.username, email: data.email } })
     } catch (err) {
       setError(err.message || 'Network error. Is the API running?')
     } finally {

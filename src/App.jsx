@@ -9,6 +9,8 @@ import Associate from './pages/dashboard/Associate'
 import Dealer from './pages/dashboard/Dealer'
 import Dealerships from './pages/dealerships/Dealerships'
 import DealershipDetail from './pages/dealerships/DealershipDetail'
+import Purchases from './pages/purchases/Purchases'
+import NewPurchase from './pages/purchases/NewPurchase'
 
 export default function App() {
   return (
@@ -24,6 +26,8 @@ export default function App() {
           <Route path="/admin" element={<Admin />} />
           <Route path="/associate" element={<Associate />} />
           <Route path="/dealer" element={<Dealer />} />
+          <Route path="/purchases" element={<Purchases />} />
+          <Route path="/purchases/new" element={<NewPurchase />} />
           <Route path="/dealerships" element={<Dealerships />} />
           <Route path="/dealerships/:id" element={<DealershipDetail />} />
           <Route path="*" element={<Navigate to="/" replace />} />

@@ -1,0 +1,125 @@
+.new-purchase-page {
+  width: 100%;
+  padding: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.new-purchase-card {
+  width: 100%;
+  max-width: 560px;
+  padding: 32px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+}
+
+.new-purchase-back {
+  display: inline-block;
+  margin-bottom: 20px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--header-blue);
+  text-decoration: none;
+}
+
+.new-purchase-back:hover {
+  text-decoration: underline;
+}
+
+.new-purchase-title {
+  margin: 0 0 24px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.new-purchase-error {
+  padding: 12px 16px;
+  font-size: 0.875rem;
+  color: var(--error);
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: var(--radius-sm);
+}
+
+.new-purchase-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.new-purchase-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.new-purchase-input {
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--text);
+  background: var(--bg-page);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.new-purchase-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+.new-purchase-input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.8;
+}
+
+.new-purchase-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.new-purchase-cancel {
+  padding: 10px 18px;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: var(--bg-page);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.new-purchase-cancel:hover {
+  border-color: var(--text-muted);
+  color: var(--text);
+}
+
+.new-purchase-confirm {
+  padding: 10px 18px;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: white;
+  background: var(--header-blue);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.new-purchase-confirm:hover {
+  background: var(--header-blue-hover);
+}

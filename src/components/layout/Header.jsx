@@ -70,11 +70,18 @@ export default function Header() {
   return (
     <header className="app-header">
       <div className="app-header-left">
-        <h1 className="app-header-logo">Stock Your Lot</h1>
+        <Link to={name ? '/purchases' : '/'} className="app-header-logo-link">
+          <h1 className="app-header-logo">Stock Your Lot</h1>
+        </Link>
         {name && (
-          <Link to="/dealerships" className="app-header-dealerships">
-            Dealerships
-          </Link>
+          <>
+            <Link to="/purchases" className="app-header-nav">
+              Purchases
+            </Link>
+            <Link to="/dealerships" className="app-header-nav">
+              Dealerships
+            </Link>
+          </>
         )}
       </div>
       {name && (
