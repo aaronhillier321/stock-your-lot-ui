@@ -91,6 +91,11 @@
   object-fit: contain;
 }
 
+.purchases-table-pdf-loader {
+  width: 24px;
+  height: 24px;
+}
+
 .purchases-table-pdf-error {
   padding: 8px 12px;
   margin-bottom: 8px;

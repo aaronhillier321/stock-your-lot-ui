@@ -1,6 +1,6 @@
 import { useMemo, useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Text } from '@mantine/core'
+import { Text, Loader } from '@mantine/core'
 import { MantineReactTable, useMantineReactTable } from 'mantine-react-table'
 import { getApiBase, authFetch } from '../api'
 import { usePdfPreview } from '../hooks/usePdfPreview'
@@ -8,7 +8,7 @@ import PdfPreviewModal from './PdfPreviewModal'
 import pdfIcon from '../../assets/pdf-icon.png'
 import './PurchasesTable.css'
 
-function buildColumns(showBuyerColumn, onPdfClick) {
+function buildColumns(showBuyerColumn, onPdfClick, loadingFileId) {
   const cols = [
     {
       accessorKey: 'vin',
@@ -59,6 +59,7 @@ function buildColumns(showBuyerColumn, onPdfClick) {
       Cell: ({ cell }) => {
         const id = cell.getValue()
         if (id == null) return ''
+        const loading = id === loadingFileId
         return (
           <button
             type="button"
@@ -68,9 +69,13 @@ function buildColumns(showBuyerColumn, onPdfClick) {
               onPdfClick(id, 'Bill of Sale')
             }}
             title="View Bill of Sale"
-            disabled={!onPdfClick}
+            disabled={!onPdfClick || loading}
           >
-            <img src={pdfIcon} alt="Bill of Sale" className="purchases-table-pdf-icon" />
+            {loading ? (
+              <Loader size="sm" className="purchases-table-pdf-loader" />
+            ) : (
+              <img src={pdfIcon} alt="Bill of Sale" className="purchases-table-pdf-icon" />
+            )}
           </button>
         )
       },
@@ -84,6 +89,7 @@ function buildColumns(showBuyerColumn, onPdfClick) {
       Cell: ({ cell }) => {
         const id = cell.getValue()
         if (id == null) return ''
+        const loading = id === loadingFileId
         return (
           <button
             type="button"
@@ -93,9 +99,13 @@ function buildColumns(showBuyerColumn, onPdfClick) {
               onPdfClick(id, 'Condition Report')
             }}
             title="View Condition Report"
-            disabled={!onPdfClick}
+            disabled={!onPdfClick || loading}
           >
-            <img src={pdfIcon} alt="Condition Report" className="purchases-table-pdf-icon" />
+            {loading ? (
+              <Loader size="sm" className="purchases-table-pdf-loader" />
+            ) : (
+              <img src={pdfIcon} alt="Condition Report" className="purchases-table-pdf-icon" />
+            )}
           </button>
         )
       },
@@ -117,10 +127,12 @@ export default function PurchasesTable({ purchases = [], showBuyerColumn = false
   const navigate = useNavigate()
   const pdfPreview = usePdfPreview()
   const [pdfError, setPdfError] = useState(null)
+  const [loadingFileId, setLoadingFileId] = useState(null)
 
   const handlePdfClick = useCallback(async (fileId, label) => {
     if (fileId == null) return
     setPdfError(null)
+    setLoadingFileId(fileId)
     try {
       const res = await authFetch(`${getApiBase()}/api/files/${fileId}`)
       if (!res.ok) {
@@ -132,12 +144,14 @@ export default function PurchasesTable({ purchases = [], showBuyerColumn = false
       pdfPreview.openPreview(file, label)
     } catch (err) {
       setPdfError(err.message || 'Failed to load PDF')
+    } finally {
+      setLoadingFileId(null)
     }
   }, [pdfPreview])
 
   const columns = useMemo(
-    () => buildColumns(showBuyerColumn, handlePdfClick),
-    [showBuyerColumn, handlePdfClick]
+    () => buildColumns(showBuyerColumn, handlePdfClick, loadingFileId),
+    [showBuyerColumn, handlePdfClick, loadingFileId]
   )
 
   const table = useMantineReactTable({
