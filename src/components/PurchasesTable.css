@@ -1,0 +1,49 @@
+/* Wrapper: table area + footer */
+.purchases-table-with-footer {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.purchases-table-toolbar-title {
+  color: var(--mantine-color-text, #212529);
+  margin: 5px 5px 0px 5px;
+  
+}
+
+.purchases-table-with-footer .purchases-table-paper {
+  flex: 1;
+  min-height: 0;
+}
+
+.purchases-table-footer-count {
+  font-size: 0.8125rem;
+  color: var(--mantine-color-dimmed, #868e96);
+  display: flex;
+  align-items: center;
+  align-self: center;
+}
+
+/* Paper fills the page body and uses flex so the table container gets a bounded height */
+.purchases-table-paper {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Table container scrolls */
+.purchases-table-wrap {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  box-sizing: border-box;
+}
+
+/* Cell padding: header and body */
+.purchases-table-wrap .mantine-Table-th,
+.purchases-table-wrap .mantine-Table-td {
+  padding: 12px 14px;
+}

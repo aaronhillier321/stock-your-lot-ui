@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import { getApiBase, authFetch, getStoredToken } from '../../api'
+import DealershipsTable from '../../components/DealershipsTable'
 import './Dealerships.css'
 
 export default function Dealerships() {
-  const navigate = useNavigate()
   const token = getStoredToken()
   const [dealerships, setDealerships] = useState([])
   const [loading, setLoading] = useState(true)
@@ -18,40 +18,6 @@ export default function Dealerships() {
     state: '',
     zip: '',
     phone: '',
-  })
-  const [filter, setFilter] = useState({
-    name: '',
-    address: '',
-    city: '',
-    state: '',
-    zip: '',
-    phone: '',
-    purchases: '',
-  })
-
-  const filteredDealerships = dealerships.filter((d) => {
-    const name = (d.name ?? '').toString().toLowerCase()
-    const address = (d.addressLine1 ?? d.address ?? '').toString().toLowerCase()
-    const city = (d.city ?? '').toString().toLowerCase()
-    const state = (d.state ?? '').toString().toLowerCase()
-    const zip = (d.postalCode ?? d.zip ?? '').toString().toLowerCase()
-    const phone = (d.phone ?? '').toString().toLowerCase()
-    const purchasesStr = (d.id != null ? (d.purchaseCount ?? d.purchase_count ?? 0) : '').toString()
-    const fn = (filter.name ?? '').trim().toLowerCase()
-    const fa = (filter.address ?? '').trim().toLowerCase()
-    const fc = (filter.city ?? '').trim().toLowerCase()
-    const fst = (filter.state ?? '').trim().toLowerCase()
-    const fz = (filter.zip ?? '').trim().toLowerCase()
-    const fph = (filter.phone ?? '').trim().toLowerCase()
-    const fp = (filter.purchases ?? '').trim()
-    if (fn && !name.includes(fn)) return false
-    if (fa && !address.includes(fa)) return false
-    if (fc && !city.includes(fc)) return false
-    if (fst && !state.includes(fst)) return false
-    if (fz && !zip.includes(fz)) return false
-    if (fph && !phone.includes(fph)) return false
-    if (fp && !purchasesStr.includes(fp)) return false
-    return true
   })
 
   async function fetchList() {
@@ -222,118 +188,7 @@ export default function Dealerships() {
           ) : dealerships.length === 0 ? (
             <p className="dealerships-empty">No dealerships yet. Click "Add dealership" to create one.</p>
           ) : (
-            <div className="dealerships-table-wrap">
-              <table className="dealerships-table">
-              <thead>
-                <tr className="dealerships-filter-row">
-                  <th>
-                    <input
-                      type="text"
-                      className="dealerships-filter-input"
-                      placeholder="Filter…"
-                      value={filter.name}
-                      onChange={(e) => setFilter((f) => ({ ...f, name: e.target.value }))}
-                      aria-label="Filter by name"
-                    />
-                  </th>
-                  <th>
-                    <input
-                      type="text"
-                      className="dealerships-filter-input"
-                      placeholder="Filter…"
-                      value={filter.address}
-                      onChange={(e) => setFilter((f) => ({ ...f, address: e.target.value }))}
-                      aria-label="Filter by address"
-                    />
-                  </th>
-                  <th>
-                    <input
-                      type="text"
-                      className="dealerships-filter-input"
-                      placeholder="Filter…"
-                      value={filter.city}
-                      onChange={(e) => setFilter((f) => ({ ...f, city: e.target.value }))}
-                      aria-label="Filter by city"
-                    />
-                  </th>
-                  <th>
-                    <input
-                      type="text"
-                      className="dealerships-filter-input"
-                      placeholder="Filter…"
-                      value={filter.state}
-                      onChange={(e) => setFilter((f) => ({ ...f, state: e.target.value }))}
-                      aria-label="Filter by state"
-                    />
-                  </th>
-                  <th>
-                    <input
-                      type="text"
-                      className="dealerships-filter-input"
-                      placeholder="Filter…"
-                      value={filter.zip}
-                      onChange={(e) => setFilter((f) => ({ ...f, zip: e.target.value }))}
-                      aria-label="Filter by ZIP"
-                    />
-                  </th>
-                  <th>
-                    <input
-                      type="text"
-                      className="dealerships-filter-input"
-                      placeholder="Filter…"
-                      value={filter.phone}
-                      onChange={(e) => setFilter((f) => ({ ...f, phone: e.target.value }))}
-                      aria-label="Filter by phone"
-                    />
-                  </th>
-                  <th>
-                    <input
-                      type="text"
-                      className="dealerships-filter-input"
-                      placeholder="Filter…"
-                      value={filter.purchases}
-                      onChange={(e) => setFilter((f) => ({ ...f, purchases: e.target.value }))}
-                      aria-label="Filter by purchases"
-                    />
-                  </th>
-                </tr>
-                <tr>
-                  <th>Name</th>
-                  <th>Address</th>
-                  <th>City</th>
-                  <th>State</th>
-                  <th>ZIP</th>
-                  <th>Phone</th>
-                  <th>Purchases</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredDealerships.map((d) => (
-                  <tr
-                    key={d.id ?? d.name}
-                    className="dealerships-row-clickable"
-                    onClick={() => (d.id != null ? navigate(`/dealerships/${d.id}`) : null)}
-                    role={d.id != null ? 'button' : undefined}
-                    tabIndex={d.id != null ? 0 : undefined}
-                    onKeyDown={(e) => {
-                      if (d.id != null && (e.key === 'Enter' || e.key === ' ')) {
-                        e.preventDefault()
-                        navigate(`/dealerships/${d.id}`)
-                      }
-                    }}
-                  >
-                    <td>{d.name ?? '—'}</td>
-                    <td>{d.addressLine1 ?? d.address ?? '—'}</td>
-                    <td>{d.city ?? '—'}</td>
-                    <td>{d.state ?? '—'}</td>
-                    <td>{d.postalCode ?? d.zip ?? '—'}</td>
-                    <td>{d.phone ?? '—'}</td>
-                    <td>{d.id != null ? (d.purchaseCount ?? d.purchase_count ?? 0) : '—'}</td>
-                  </tr>
-                ))}
-              </tbody>
-              </table>
-            </div>
+            <DealershipsTable dealerships={dealerships} />
           )}
         </div>
     </div>
