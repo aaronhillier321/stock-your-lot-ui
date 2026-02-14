@@ -1,6 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { Navigate, Link, useNavigate } from 'react-router-dom'
 import { getApiBase, authFetch, getStoredToken } from '../../api'
+import { usePdfPreview } from '../../hooks/usePdfPreview'
+import PdfPreviewModal from '../../components/PdfPreviewModal'
+import carImage from '../../../assets/Car.png'
 import './NewPurchase.css'
 
 const emptyForm = {
@@ -22,6 +26,8 @@ export default function NewPurchase() {
   const token = getStoredToken()
   const billOfSaleInputRef = useRef(null)
   const conditionReportInputRef = useRef(null)
+  const continueBtnRef = useRef(null)
+  const [carStartPos, setCarStartPos] = useState(null)
   const [dealerships, setDealerships] = useState([])
   const [dealershipsLoading, setDealershipsLoading] = useState(true)
   const [formData, setFormData] = useState(emptyForm)
@@ -35,6 +41,8 @@ export default function NewPurchase() {
   const [dragOverZone, setDragOverZone] = useState(null)
   const [conflictErrors, setConflictErrors] = useState({})
   const [uploadToken, setUploadToken] = useState(null)
+  const [confirmedAccurate, setConfirmedAccurate] = useState(false)
+  const pdfPreview = usePdfPreview()
 
   useEffect(() => {
     if (!token) return
@@ -80,6 +88,14 @@ export default function NewPurchase() {
 
   async function runExtractions() {
     if (!formData.dealershipId?.trim() || !billOfSaleFile || !conditionReportFile) return
+    const btn = continueBtnRef.current
+    if (btn) {
+      const rect = btn.getBoundingClientRect()
+      const carHeight = 80
+      const centerY = rect.top + rect.height / 2
+      const clampedY = Math.max(carHeight / 2, Math.min(window.innerHeight - carHeight / 2, centerY))
+      setCarStartPos({ left: rect.right - 50, top: clampedY })
+    }
     setError('')
     setConflictErrors({})
     setExtracting(true)
@@ -142,6 +158,7 @@ export default function NewPurchase() {
       setError(err.message || 'Failed to extract from documents')
     } finally {
       setExtracting(false)
+      setCarStartPos(null)
     }
   }
 
@@ -389,6 +406,7 @@ export default function NewPurchase() {
             </div>
             <div className="new-purchase-extract-row">
               <button
+                ref={continueBtnRef}
                 type="button"
                 className="new-purchase-extract-btn"
                 disabled={!allThreeReady || extracting}
@@ -397,6 +415,21 @@ export default function NewPurchase() {
                 {extracting ? 'Extracting…' : 'Continue'}
               </button>
             </div>
+            {extracting && carStartPos &&
+              createPortal(
+                <div
+                  className="new-purchase-car-sprite"
+                  style={{
+                    '--car-start-left': `${carStartPos.left}px`,
+                    '--car-start-top': `${carStartPos.top}px`,
+                  }}
+                  aria-hidden
+                >
+                  <img src={carImage} alt="" className="new-purchase-car-sprite-img" />
+                </div>,
+                document.body
+              )
+            }
             {error && (
               <div className="new-purchase-error" role="alert">
                 {error}
@@ -581,22 +614,41 @@ export default function NewPurchase() {
 
             <div className="new-purchase-footer-row">
               <div className="new-purchase-uploads-row">
-                <div className="new-purchase-upload-badge" title={billOfSaleFile?.name}>
+                <button
+                  type="button"
+                  className="new-purchase-upload-badge new-purchase-upload-badge-clickable"
+                  title={billOfSaleFile?.name ? `Preview: ${billOfSaleFile.name}` : 'Preview PDF'}
+                  onClick={() => pdfPreview.openPreview(billOfSaleFile, 'Bill of Sale')}
+                >
                   <span className="new-purchase-upload-pdf">PDF</span>
                   <span className="new-purchase-upload-check">✓</span>
                   <span className="new-purchase-upload-label">Bill of Sale</span>
-                </div>
-                <div className="new-purchase-upload-badge" title={conditionReportFile?.name}>
+                </button>
+                <button
+                  type="button"
+                  className="new-purchase-upload-badge new-purchase-upload-badge-clickable"
+                  title={conditionReportFile?.name ? `Preview: ${conditionReportFile.name}` : 'Preview PDF'}
+                  onClick={() => pdfPreview.openPreview(conditionReportFile, 'Condition Report')}
+                >
                   <span className="new-purchase-upload-pdf">PDF</span>
                   <span className="new-purchase-upload-check">✓</span>
                   <span className="new-purchase-upload-label">Condition Report</span>
-                </div>
+                </button>
               </div>
               <div className="new-purchase-actions">
+                <label className="new-purchase-confirm-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={confirmedAccurate}
+                    onChange={(e) => setConfirmedAccurate(e.target.checked)}
+                    disabled={submitting}
+                  />
+                  <span>I have confirmed the above information is accurate.</span>
+                </label>
                 <Link to="/purchases" className="new-purchase-cancel" tabIndex={submitting ? -1 : 0}>
                   Cancel
                 </Link>
-                <button type="submit" className="new-purchase-confirm" disabled={submitting}>
+                <button type="submit" className="new-purchase-confirm" disabled={submitting || !confirmedAccurate}>
                   {submitting ? 'Saving…' : 'Confirm'}
                 </button>
               </div>
@@ -604,6 +656,13 @@ export default function NewPurchase() {
           </form>
         )}
       </div>
+
+      <PdfPreviewModal
+        open={pdfPreview.isOpen}
+        url={pdfPreview.url}
+        label={pdfPreview.label}
+        onClose={pdfPreview.closePreview}
+      />
     </div>
   )
 }

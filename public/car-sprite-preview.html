@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Car sprite preview</title>
+  <style>
+    body { font-family: system-ui; padding: 24px; background: #f0f2f5; }
+    h1 { margin: 0 0 16px; font-size: 1rem; color: #333; }
+    .frame { display: inline-block; padding: 16px; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    svg { display: block; }
+    .size-64 { width: 64px; height: 32px; }
+    .size-128 { width: 128px; height: 64px; }
+    .size-320 { width: 320px; height: 160px; }
+    p { margin: 12px 0 0; font-size: 0.875rem; color: #666; }
+  </style>
+</head>
+<body>
+  <h1>Car sprite (as used in app: 64×32px)</h1>
+  <div class="frame">
+    <svg class="size-64" viewBox="0 0 80 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 28a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm48 0a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" fill="#374151"/>
+      <path d="M12 28h48v-4l-6-8H18l-6 8v4Z" fill="#1e5a8e"/>
+      <path d="M20 16h8v6h-8zM36 16h8v6h-8z" fill="#93c5fd"/>
+      <path d="M56 20h8l4 8H52l4-8Z" fill="#164870"/>
+    </svg>
+  </div>
+  <p>64×32px (actual size in app)</p>
+
+  <h1 style="margin-top: 24px;">Larger (128×64)</h1>
+  <div class="frame">
+    <svg class="size-128" viewBox="0 0 80 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 28a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm48 0a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" fill="#374151"/>
+      <path d="M12 28h48v-4l-6-8H18l-6 8v4Z" fill="#1e5a8e"/>
+      <path d="M20 16h8v6h-8zM36 16h8v6h-8z" fill="#93c5fd"/>
+      <path d="M56 20h8l4 8H52l4-8Z" fill="#164870"/>
+    </svg>
+  </div>
+
+  <h1 style="margin-top: 24px;">Full size (320×160)</h1>
+  <div class="frame">
+    <svg class="size-320" viewBox="0 0 80 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 28a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm48 0a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" fill="#374151"/>
+      <path d="M12 28h48v-4l-6-8H18l-6 8v4Z" fill="#1e5a8e"/>
+      <path d="M20 16h8v6h-8zM36 16h8v6h-8z" fill="#93c5fd"/>
+      <path d="M56 20h8l4 8H52l4-8Z" fill="#164870"/>
+    </svg>
+  </div>
+</body>
+</html>
