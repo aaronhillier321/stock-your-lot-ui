@@ -10,6 +10,7 @@ import {
   getApiBase,
   authFetch,
 } from '../../api'
+import { Tabs } from '@mantine/core'
 import PurchasesTable from '../../components/PurchasesTable'
 import './DashboardPage.css'
 
@@ -74,20 +75,35 @@ export default function DashboardPage({ role }) {
   if (role === 'admin') {
     return (
       <div className="dashboard dashboard-admin">
-        <div className="dashboard-admin-header"></div> 
         {error && (
           <div className="dashboard-admin-error" role="alert">
             {error}
           </div>
         )}
-        <div className="dashboard-admin-body">
-          {loading ? (
-            <p className="dashboard-admin-loading">Loading all purchases…</p>
-          ) : purchases.length === 0 ? (
-            <p className="dashboard-admin-empty">No purchases.</p>
-          ) : (
-            <PurchasesTable purchases={purchases} showBuyerColumn />
-          )}
+        <div className="dashboard-admin-card">
+          <Tabs defaultValue="purchases" className="dashboard-admin-tabs">
+            <Tabs.List className="dashboard-admin-tabs-list">
+              <Tabs.Tab value="purchases">Purchases</Tabs.Tab>
+              <Tabs.Tab value="users">Users</Tabs.Tab>
+            </Tabs.List>
+            <Tabs.Panel value="purchases" className="dashboard-admin-tabs-panel">
+              <div className="dashboard-admin-table-section">
+                {loading ? (
+                  <p className="dashboard-admin-loading">Loading all purchases…</p>
+                ) : purchases.length === 0 ? (
+                  <p className="dashboard-admin-empty">No purchases.</p>
+                ) : (
+                  <PurchasesTable purchases={purchases} showBuyerColumn />
+                )}
+              </div>
+              <div className="dashboard-admin-below-section">
+                {/* Add other content here */}
+              </div>
+            </Tabs.Panel>
+            <Tabs.Panel value="users" className="dashboard-admin-tabs-panel">
+              <p className="dashboard-admin-empty">Users — coming soon.</p>
+            </Tabs.Panel>
+          </Tabs>
         </div>
       </div>
     )

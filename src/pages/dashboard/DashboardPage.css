@@ -83,12 +83,73 @@
   border-radius: var(--radius-sm);
 }
 
-.dashboard-admin-body {
+/* Card wrapping the admin tabs; table fills remaining space and scrolls inside */
+.dashboard-admin-card {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.dashboard-admin-tabs {
   flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+.dashboard-admin-tabs-list {
+  flex-shrink: 0;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.dashboard-admin-tabs-list > * {
+  padding: 8px 16px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+}
+
+.dashboard-admin-tabs-panel {
+  /* flex: 1; */
+  min-height: 0;
+  height: 100%!important;
+  /* overflow: hidden;
+  display: flex;
+  flex-direction: column; */
+}
+
+/* Table fixed to top half of panel; scrolls inside this section */
+.dashboard-admin-table-section {
+  flex: 0 0 50%;
+  min-height: 0;
+  max-height: 90%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.dashboard-admin-table-section .purchases-table-with-footer {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Bottom half of card for other content */
+.dashboard-admin-below-section {
+  flex: 1;
+  min-height: 0;
+  padding-top: 16px;
 }
 
 .dashboard-admin-loading,
