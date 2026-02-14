@@ -12,8 +12,8 @@ export function getApiBase() {
   if (import.meta.env.PROD) {
     return HOSTED_API_URL
   }
-  // Dev: use relative /api so Vite proxy sends to localhost:8080
-  return ''
+  // Dev: hit API directly on port 8080
+  return 'http://localhost:8080'
 }
 
 export function getStoredToken() {

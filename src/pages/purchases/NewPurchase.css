@@ -1,24 +1,145 @@
 .new-purchase-page {
   width: 100%;
-  padding: 24px;
+  min-height: 100%;
+  padding: 12px 16px;
+  box-sizing: border-box;
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  flex-direction: column;
 }
 
 .new-purchase-card {
-  width: 100%;
-  max-width: 720px;
-  padding: 32px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
+  flex: 0 0 auto;
+  padding: 16px;
+  background: #f8f9fb;
   border-radius: var(--radius);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.new-purchase-label-dropdown {
+  margin-bottom: 16px;
+}
+
+.new-purchase-dropzones {
+  display: flex;
+  gap: 16px;
+}
+
+.new-purchase-dropzone .new-purchase-required {
+  color: var(--error);
+}
+
+.new-purchase-extract-row {
+  margin-top: 16px;
+}
+
+.new-purchase-extract-btn {
+  padding: 10px 20px;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: white;
+  background: var(--header-blue);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.new-purchase-extract-btn:hover:not(:disabled) {
+  background: var(--header-blue-hover);
+}
+
+.new-purchase-extract-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.new-purchase-input-conflict {
+  border-color: var(--error);
+  box-shadow: 0 0 0 1px var(--error);
+}
+
+.new-purchase-input-conflict:focus {
+  border-color: var(--error);
+  box-shadow: 0 0 0 2px rgba(197, 48, 48, 0.3);
+}
+
+.new-purchase-conflict-msg {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: var(--error);
+}
+
+.new-purchase-dropzone {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 120px;
+  padding: 20px;
+  background: #e8eaee;
+  border: 2px dashed #b8bcc4;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.new-purchase-dropzone:hover:not(.new-purchase-dropzone-disabled) {
+  background: #dfe2e8;
+  border-color: var(--header-blue);
+  border-style: solid;
+}
+
+.new-purchase-dropzone-active {
+  background: #d4d9e2;
+  border-color: var(--header-blue);
+  border-style: solid;
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.new-purchase-dropzone-disabled {
+  cursor: not-allowed;
+  opacity: 0.85;
+}
+
+@media (max-width: 560px) {
+  .new-purchase-dropzones {
+    flex-direction: column;
+  }
+}
+
+.new-purchase-dropzone-input {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.new-purchase-dropzone-icon {
+  font-size: 1.5rem;
+  opacity: 0.7;
+}
+
+.new-purchase-dropzone-text {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  text-align: center;
+}
+
+.new-purchase-dropzone-hint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
 }
 
 .new-purchase-back {
   display: inline-block;
-  margin-bottom: 20px;
+  margin-bottom: 8px;
   font-size: 0.9375rem;
   font-weight: 500;
   color: var(--header-blue);
@@ -30,13 +151,22 @@
 }
 
 .new-purchase-title {
-  margin: 0 0 24px;
+  margin: 0 0 12px;
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--text);
 }
 
+.new-purchase-label-text {
+  white-space: nowrap;
+}
+
+.new-purchase-required {
+  color: var(--error);
+}
+
 .new-purchase-error {
+  margin-top: 12px;
   padding: 12px 16px;
   font-size: 0.875rem;
   color: var(--error);
@@ -48,12 +178,16 @@
 
 .new-purchase-form {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 20px 24px;
 }
 
 .new-purchase-form .new-purchase-actions {
-  grid-column: 1 / -1;
+  grid-column: 2 / -1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  gap: 12px;
 }
 
 .new-purchase-label {
@@ -86,17 +220,29 @@
   opacity: 0.8;
 }
 
+.new-purchase-input:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  background: #e8eaee;
+}
+
 .new-purchase-select {
   cursor: pointer;
   appearance: auto;
 }
 
+.new-purchase-file {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.new-purchase-file-name {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
 .new-purchase-actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 12px;
-  padding-top: 20px;
-  border-top: 1px solid var(--border);
+  align-items: center;
 }
 
 .new-purchase-cancel {
@@ -132,6 +278,12 @@
 
 .new-purchase-confirm:hover {
   background: var(--header-blue-hover);
+}
+
+@media (max-width: 900px) {
+  .new-purchase-form {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @media (max-width: 560px) {

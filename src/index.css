@@ -46,11 +46,10 @@ body {
 .app-main {
   flex: 1;
   min-height: 0;
-  overflow: hidden;
+  overflow: auto;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: stretch;
   padding: 24px;
   position: relative;
   background: var(--bg-page);
