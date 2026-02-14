@@ -579,13 +579,27 @@ export default function NewPurchase() {
               />
             </label>
 
-            <div className="new-purchase-actions">
-              <Link to="/purchases" className="new-purchase-cancel" tabIndex={submitting ? -1 : 0}>
-                Cancel
-              </Link>
-              <button type="submit" className="new-purchase-confirm" disabled={submitting}>
-                {submitting ? 'Saving…' : 'Confirm'}
-              </button>
+            <div className="new-purchase-footer-row">
+              <div className="new-purchase-uploads-row">
+                <div className="new-purchase-upload-badge" title={billOfSaleFile?.name}>
+                  <span className="new-purchase-upload-pdf">PDF</span>
+                  <span className="new-purchase-upload-check">✓</span>
+                  <span className="new-purchase-upload-label">Bill of Sale</span>
+                </div>
+                <div className="new-purchase-upload-badge" title={conditionReportFile?.name}>
+                  <span className="new-purchase-upload-pdf">PDF</span>
+                  <span className="new-purchase-upload-check">✓</span>
+                  <span className="new-purchase-upload-label">Condition Report</span>
+                </div>
+              </div>
+              <div className="new-purchase-actions">
+                <Link to="/purchases" className="new-purchase-cancel" tabIndex={submitting ? -1 : 0}>
+                  Cancel
+                </Link>
+                <button type="submit" className="new-purchase-confirm" disabled={submitting}>
+                  {submitting ? 'Saving…' : 'Confirm'}
+                </button>
+              </div>
             </div>
           </form>
         )}
