@@ -109,12 +109,29 @@ export function getLandingRoute(roles, dealershipRoles) {
 }
 
 /**
+ * Clears all stored auth data (token, user name, role, dealer name).
+ * Call on sign-out or when the API returns 401 (e.g. expired JWT).
+ */
+export function clearAuth() {
+  clearStoredToken()
+  clearStoredUserName()
+  clearStoredUserRole()
+  clearStoredDealerName()
+}
+
+/**
  * fetch that adds Authorization: Bearer <token> when a token is stored.
- * Use for authenticated API calls.
+ * On 401 (e.g. expired JWT), clears auth and redirects to login with session_expired=1.
  */
 export function authFetch(url, options = {}) {
   const token = getStoredToken()
   const headers = new Headers(options.headers)
   if (token) headers.set('Authorization', `Bearer ${token}`)
-  return fetch(url, { ...options, headers })
+  return fetch(url, { ...options, headers }).then((res) => {
+    if (res.status === 401) {
+      clearAuth()
+      window.location.replace('/?session_expired=1')
+    }
+    return res
+  })
 }

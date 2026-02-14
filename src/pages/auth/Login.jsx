@@ -8,6 +8,7 @@ export default function Login() {
   const location = useLocation()
   const token = getStoredToken()
   const inviteAccepted = location.state?.inviteAccepted
+  const sessionExpired = new URLSearchParams(location.search).get('session_expired') === '1'
   const [email, setEmail] = useState('')
 
   if (token) {
@@ -63,6 +64,11 @@ export default function Login() {
         </div>
 
         <form className="login-form" onSubmit={handleSubmit}>
+          {sessionExpired && (
+            <div className="login-session-expired" role="alert">
+              Your session has expired. Please sign in again.
+            </div>
+          )}
           {inviteAccepted && (
             <div className="login-success" role="status">
               Your account is active. Sign in with your email and password.

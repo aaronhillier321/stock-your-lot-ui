@@ -40,6 +40,15 @@
   gap: 20px;
 }
 
+.login-session-expired {
+  padding: 12px 16px;
+  font-size: 0.875rem;
+  color: #92400e;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: var(--radius-sm);
+}
+
 .login-success {
   padding: 12px 16px;
   font-size: 0.875rem;

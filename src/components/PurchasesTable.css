@@ -47,3 +47,40 @@
 .purchases-table-wrap .mantine-Table-td {
   padding: 12px 14px;
 }
+
+/* PDF icon button in table (Bill of Sale / Condition Report columns) */
+.purchases-table-pdf-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.purchases-table-pdf-btn:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.purchases-table-pdf-btn:disabled {
+  cursor: default;
+}
+
+.purchases-table-pdf-icon {
+  display: block;
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.purchases-table-pdf-error {
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  font-size: 0.875rem;
+  color: var(--error);
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: var(--radius-sm);
+}
