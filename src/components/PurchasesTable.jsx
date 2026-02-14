@@ -11,39 +11,40 @@ import './PurchasesTable.css'
 function buildColumns(showBuyerColumn, onPdfClick) {
   const cols = [
     {
+      accessorKey: 'vin',
+      header: 'VIN',
+      // size: 'auto'
+    },
+    {
+      
       accessorKey: 'date',
       header: 'Date',
-      size: 90,
+      minSize: 0
     },
     {
       id: 'dealership',
       accessorFn: (row) => (row.dealershipName ?? row.dealership ?? '—').toString(),
       header: 'Dealership',
-      size: 140,
-    },
-    {
-      accessorKey: 'vin',
-      header: 'VIN',
-      size: 120,
+      // size: 140,
     },
     {
       id: 'vehicle',
       accessorFn: (row) =>
         [row.vehicleYear, row.vehicleMake, row.vehicleModel].filter(Boolean).join(' ') || '—',
       header: 'Vehicle',
-      size: 180,
+      // size: 180,
     },
     {
       accessorKey: 'miles',
       header: 'Miles',
-      size: 90,
+      // size: 90,
       Cell: ({ cell }) =>
         cell.getValue() != null ? Number(cell.getValue()).toLocaleString() : '—',
     },
     {
       accessorKey: 'purchasePrice',
       header: 'Purchase Price',
-      size: 120,
+      // size: 120,
       Cell: ({ cell }) =>
         cell.getValue() != null
           ? `$${Number(cell.getValue()).toLocaleString()}`
@@ -53,7 +54,7 @@ function buildColumns(showBuyerColumn, onPdfClick) {
       id: 'billOfSale',
       accessorFn: (row) => row.billOfSaleFileId ?? row.billOfSaleFileID ?? null,
       header: 'Bill of Sale',
-      size: 100,
+      // size: 100,
       enableColumnFilter: false,
       Cell: ({ cell }) => {
         const id = cell.getValue()
@@ -78,7 +79,7 @@ function buildColumns(showBuyerColumn, onPdfClick) {
       id: 'conditionReport',
       accessorFn: (row) => row.conditionReportFileId ?? row.conditionReportFileID ?? null,
       header: 'Condition Report',
-      size: 120,
+      // size: 120,
       enableColumnFilter: false,
       Cell: ({ cell }) => {
         const id = cell.getValue()
@@ -106,7 +107,7 @@ function buildColumns(showBuyerColumn, onPdfClick) {
       accessorFn: (row) =>
         (row.buyerEmail ?? row.buyer?.email ?? '—').toString(),
       header: 'Buyer',
-      size: 140,
+      // size: 140,
     })
   }
   return cols
@@ -148,6 +149,8 @@ export default function PurchasesTable({ purchases = [], showBuyerColumn = false
     enableTableFooter: false,
     enableBottomToolbar: true,
     enableStickyHeader: true,
+    enableColumnPinning: true,
+    layoutMode: 'grid-no-grow',
     mantinePaperProps: {
       className: 'purchases-table-paper',
       style: {
@@ -160,13 +163,16 @@ export default function PurchasesTable({ purchases = [], showBuyerColumn = false
     },
     mantineTableContainerProps: {
       className: 'purchases-table-wrap',
-      style: { flex: 1, minHeight: 0, overflow: 'auto' },
+      style: { flex: 1, minHeight: 0, overflow: 'auto', overflowX: 'auto' },
+    },
+    mantineTableProps: {
+      style: { minWidth: 'max-content' },
     },
     mantineTableHeadCellProps: {
-      style: { padding: '12px 14px' },
+      style: { padding: '12px 14px', display: 'flex', justifyContent: 'center', width: 'auto' },
     },
     mantineTableBodyCellProps: {
-      style: { padding: '12px 14px' },
+      style: { padding: '12px 14px', display: 'flex', justifyContent: 'center', width: 'auto' },
     },
     mantineTableBodyRowProps: ({ row }) => ({
       onClick: () => {
@@ -178,6 +184,7 @@ export default function PurchasesTable({ purchases = [], showBuyerColumn = false
     }),
     initialState: {
       density: 'compact',
+      columnPinning: { left: ['vin'] },
     },
     renderTopToolbarCustomActions: () => (
       <div className="purchases-table-toolbar-title">

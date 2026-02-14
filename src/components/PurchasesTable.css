@@ -32,14 +32,30 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  td {
+    justify-content: center!important;
+  }
+  th {
+    justify-content: center!important;
+    /* width: auto!important; */
+    div {
+      justify-content: center!important;
+    }
+  }
 }
 
-/* Table container scrolls */
+/* Table container scrolls; horizontal scroll so pinned column stays fixed */
 .purchases-table-wrap {
   flex: 1;
   min-height: 0;
   overflow: auto;
+  overflow-x: auto;
   box-sizing: border-box;
+}
+
+/* Pinned column (VIN) background so content doesn’t show through when scrolling */
+.purchases-table-wrap [data-column-pinned] {
+  --mrt-pinned-column-background-color: var(--mantine-color-body, #fff);
 }
 
 /* Cell padding: header and body */
