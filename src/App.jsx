@@ -9,6 +9,7 @@ import Associate from './pages/dashboard/Associate'
 import Dealer from './pages/dashboard/Dealer'
 import Dealerships from './pages/dealerships/Dealerships'
 import DealershipDetail from './pages/dealerships/DealershipDetail'
+import UserDetail from './pages/users/UserDetail'
 import Purchases from './pages/purchases/Purchases'
 import NewPurchase from './pages/purchases/NewPurchase'
 import PurchaseDetail from './pages/purchases/PurchaseDetail'
@@ -32,6 +33,7 @@ export default function App() {
           <Route path="/purchases/:id" element={<PurchaseDetail />} />
           <Route path="/dealerships" element={<Dealerships />} />
           <Route path="/dealerships/:id" element={<DealershipDetail />} />
+          <Route path="/users/:id" element={<UserDetail />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

@@ -1,0 +1,204 @@
+.user-detail-page {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.user-detail-top-bar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  gap: 12px;
+}
+
+.user-detail-back {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--header-blue);
+  text-decoration: none;
+}
+
+.user-detail-back:hover {
+  text-decoration: underline;
+}
+
+.user-detail-loading,
+.user-detail-error {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+}
+
+.user-detail-error {
+  color: var(--error);
+  margin-bottom: 12px;
+}
+
+.user-detail-header {
+  flex-shrink: 0;
+  margin-bottom: 16px;
+}
+
+.user-detail-title {
+  margin: 0 0 12px;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.user-detail-info-line {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.user-detail-edit-btn {
+  padding: 8px 16px;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: white;
+  background: var(--header-blue);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.user-detail-edit-btn:hover {
+  background: var(--header-blue-hover);
+}
+
+.user-detail-edit-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.user-detail-cancel-btn {
+  padding: 8px 16px;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: var(--bg-page);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.user-detail-cancel-btn:hover:not(:disabled) {
+  border-color: var(--text-muted);
+  color: var(--text);
+}
+
+.user-detail-save-btn {
+  padding: 8px 16px;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: white;
+  background: var(--header-blue);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.user-detail-save-btn:hover:not(:disabled) {
+  background: var(--header-blue-hover);
+}
+
+.user-detail-cancel-btn:disabled,
+.user-detail-save-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.user-detail-section {
+  flex: 1;
+  min-height: 0;
+  margin-top: 16px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.user-detail-submit-error {
+  margin-bottom: 16px;
+  padding: 10px 12px;
+  font-size: 0.875rem;
+  color: var(--error);
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: var(--radius-sm);
+}
+
+.user-detail-form {
+  max-width: 100%;
+}
+
+.user-detail-card {
+  padding: 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  max-width: 600px;
+}
+
+.user-detail-dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 12px 24px;
+  font-size: 0.9375rem;
+  align-items: start;
+}
+
+.user-detail-dl dt {
+  margin: 0;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.user-detail-dd {
+  margin: 0;
+  color: var(--text);
+  line-height: 1.5;
+  min-height: 2.25rem;
+  display: flex;
+  align-items: flex-start;
+}
+
+.user-detail-dd .user-detail-input {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.user-detail-input {
+  padding: 6px 10px;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  color: var(--text);
+  background: var(--bg-page);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.user-detail-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+.user-detail-select {
+  cursor: pointer;
+}
