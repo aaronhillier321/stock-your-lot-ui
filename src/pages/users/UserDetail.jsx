@@ -28,7 +28,7 @@ function toUpdateBody(form) {
     firstName: form.firstName.trim(),
     lastName: form.lastName.trim(),
     email: form.email.trim(),
-    phone: form.phone.trim(),
+    phoneNumber: form.phone.trim(),
     role: form.role,
   }
 }

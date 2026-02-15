@@ -110,7 +110,7 @@ export default function DashboardPage({ role }) {
           firstName: addUserForm.firstName.trim(),
           lastName: addUserForm.lastName.trim(),
           email: addUserForm.email.trim(),
-          phone: addUserForm.phone.trim() || undefined,
+          phoneNumber: addUserForm.phone.trim() || undefined,
           role: addUserForm.role,
         }),
       })
