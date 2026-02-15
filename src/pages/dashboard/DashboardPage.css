@@ -248,6 +248,14 @@
   color: var(--text-muted);
 }
 
+.dashboard-admin-add-user-label-text {
+  white-space: nowrap;
+}
+
+.dashboard-admin-add-user-required {
+  color: var(--error);
+}
+
 .dashboard-admin-add-user-input {
   padding: 10px 12px;
   font-family: inherit;

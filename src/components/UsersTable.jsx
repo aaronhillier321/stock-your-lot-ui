@@ -103,13 +103,6 @@ export default function UsersTable({ users = [] }) {
     initialState: {
       density: 'compact',
     },
-    renderTopToolbarCustomActions: () => (
-      <div className="purchases-table-toolbar-title">
-        <Text size="lg" fw={700}>
-          Users
-        </Text>
-      </div>
-    ),
     renderBottomToolbarCustomActions: ({ table }) => {
       const filteredCount = table.getRowModel().rows.length
       const totalCount = users.length

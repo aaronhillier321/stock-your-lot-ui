@@ -212,13 +212,6 @@ export default function PurchasesTable({ purchases = [], showBuyerColumn = false
       density: 'compact',
       columnPinning: { left: ['vin'] },
     },
-    renderTopToolbarCustomActions: () => (
-      <div className="purchases-table-toolbar-title">
-      <Text size="lg" fw={700} className=" p2">
-        Purchases
-      </Text>
-      </div>
-    ),
     renderBottomToolbarCustomActions: ({ table }) => {
       const filteredCount = table.getRowModel().rows.length
       const totalCount = purchases.length

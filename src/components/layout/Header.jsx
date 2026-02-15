@@ -1,11 +1,13 @@
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, Link, NavLink } from 'react-router-dom'
 import {
   getStoredUserName,
+  getStoredUserRole,
   clearStoredToken,
   clearStoredUserName,
   clearStoredUserRole,
   clearStoredDealerName,
 } from '../../api'
+import sylLogo from '../../../assets/syl-logo.png'
 import './Header.css'
 
 function formatDisplayName(name) {
@@ -57,6 +59,7 @@ function HelpIcon() {
 export default function Header() {
   const navigate = useNavigate()
   const name = getStoredUserName()
+  const role = getStoredUserRole()
   const displayName = formatDisplayName(name)
 
   function handleSignOut() {
@@ -71,19 +74,21 @@ export default function Header() {
     <header className="app-header">
       <div className="app-header-left">
         <Link to={name ? '/purchases' : '/'} className="app-header-logo-link">
-          <h1 className="app-header-logo">Stock Your Lot</h1>
+          <img src={sylLogo} alt="Stock Your Lot" className="app-header-logo-img" />
         </Link>
         {name && (
           <>
-            <Link to="/purchases" className="app-header-nav">
-              My Purchases
-            </Link>
-            <Link to="/dealerships" className="app-header-nav">
+            <NavLink to="/purchases" className="app-header-nav" end={false}>
+              Purchases
+            </NavLink>
+            <NavLink to="/dealerships" className="app-header-nav" end={false}>
               Dealerships
-            </Link>
-            <Link to="/admin" className="app-header-nav">
-              Admin
-            </Link>
+            </NavLink>
+            {role === 'admin' && (
+              <NavLink to="/users" className="app-header-nav" end={false}>
+                Users
+              </NavLink>
+            )}
           </>
         )}
       </div>

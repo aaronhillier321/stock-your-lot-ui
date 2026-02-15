@@ -9,17 +9,22 @@ function formatRoles(roles) {
   return String(roles)
 }
 
+const ROLE_OPTIONS = ['BUYER', 'DEALER', 'ADMIN']
+
 function toFormData(user) {
   const name = (user.name ?? user.userName ?? user.fullName ?? user.displayName ?? '').toString().trim()
   const parts = name ? name.split(/\s+/) : []
   const firstName = user.firstName ?? parts[0] ?? ''
   const lastName = user.lastName ?? (parts.length > 1 ? parts.slice(1).join(' ') : '') ?? ''
+  let roles = user.roles ?? user.role ?? user.userRole ?? 'BUYER'
+  if (!Array.isArray(roles)) roles = roles ? [roles] : ['BUYER']
+  if (roles.length === 0) roles = ['BUYER']
   return {
     firstName,
     lastName,
     email: (user.email ?? user.userName ?? '').toString().trim(),
     phone: (user.phone ?? user.phoneNumber ?? '').toString().trim(),
-    role: user.role ?? user.userRole ?? 'BUYER',
+    roles: [...roles],
   }
 }
 
@@ -29,7 +34,7 @@ function toUpdateBody(form) {
     lastName: form.lastName.trim(),
     email: form.email.trim(),
     phoneNumber: form.phone.trim(),
-    role: form.role,
+    roles: form.roles.length ? form.roles : ['BUYER'],
   }
 }
 
@@ -122,7 +127,7 @@ export default function UserDetail() {
     return (
       <div className="user-detail-page">
         <p className="user-detail-error">{error}</p>
-        <Link to="/admin" className="user-detail-back">← Back to Admin</Link>
+        <Link to="/users" className="user-detail-back">← Back to Users</Link>
       </div>
     )
   }
@@ -187,19 +192,67 @@ export default function UserDetail() {
             />
           )}
         </dd>
-        <dt>Role</dt>
-        <dd className="user-detail-dd">
-          {!editing ? formatRoles(user.role ?? user.userRole ?? user.roles) : (
-            <select
-              className="user-detail-input user-detail-select"
-              value={form.role}
-              onChange={(e) => setFormData((f) => ({ ...f, role: e.target.value }))}
-              required
-            >
-              <option value="BUYER">Buyer</option>
-              <option value="DEALER">Dealer</option>
-              <option value="ADMIN">Admin</option>
-            </select>
+        <dt>Roles</dt>
+        <dd className="user-detail-dd user-detail-dd-roles">
+          {!editing ? formatRoles(user.roles ?? user.role ?? user.userRole) : (
+            <div className="user-detail-roles-edit">
+              <ul className="user-detail-roles-list">
+                {form.roles.map((role, idx) => (
+                  <li key={`${role}-${idx}`} className="user-detail-role-chip">
+                    <span className="user-detail-role-label">{role === 'BUYER' ? 'Buyer' : role === 'DEALER' ? 'Dealer' : 'Admin'}</span>
+                    <button
+                      type="button"
+                      className="user-detail-role-remove"
+                      onClick={() => setFormData((f) => ({
+                        ...f,
+                        roles: f.roles.filter((_, i) => i !== idx),
+                      }))}
+                      aria-label={`Remove ${role}`}
+                      title={`Remove ${role}`}
+                    >
+                      <span aria-hidden>−</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              <div className="user-detail-roles-add">
+                <select
+                  className="user-detail-input user-detail-select user-detail-roles-select"
+                  value=""
+                  onChange={(e) => {
+                    const v = e.target.value
+                    if (v) {
+                      setFormData((f) => ({ ...f, roles: [...f.roles, v] }))
+                      e.target.value = ''
+                    }
+                  }}
+                  aria-label="Add role"
+                  disabled={!ROLE_OPTIONS.some((r) => !form.roles.includes(r))}
+                >
+                  <option value="">Add role…</option>
+                  {ROLE_OPTIONS.filter((r) => !form.roles.includes(r)).map((r) => (
+                    <option key={r} value={r}>
+                      {r === 'BUYER' ? 'Buyer' : r === 'DEALER' ? 'Dealer' : 'Admin'}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  className="user-detail-role-add-btn"
+                  onClick={() => {
+                    const available = ROLE_OPTIONS.filter((r) => !form.roles.includes(r))
+                    if (available.length) {
+                      setFormData((f) => ({ ...f, roles: [...f.roles, available[0]] }))
+                    }
+                  }}
+                  aria-label="Add role"
+                  title="Add role"
+                  disabled={!ROLE_OPTIONS.some((r) => !form.roles.includes(r))}
+                >
+                  <span aria-hidden>+</span>
+                </button>
+              </div>
+            </div>
           )}
         </dd>
       </dl>
@@ -209,7 +262,7 @@ export default function UserDetail() {
   return (
     <div className="user-detail-page">
       <div className="user-detail-top-bar">
-        <Link to="/admin" className="user-detail-back">← Back to Admin</Link>
+        <Link to="/users" className="user-detail-back">← Back to Users</Link>
         {!editing ? (
           <button type="button" className="user-detail-edit-btn" onClick={startEditing}>
             Edit

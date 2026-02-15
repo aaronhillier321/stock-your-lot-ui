@@ -4,7 +4,7 @@ import Login from './pages/auth/Login'
 import SignUp from './pages/auth/SignUp'
 import AcceptInvite from './pages/auth/AcceptInvite'
 import Welcome from './pages/dashboard/Welcome'
-import Admin from './pages/dashboard/Admin'
+import Users from './pages/users/Users'
 import Associate from './pages/dashboard/Associate'
 import Dealer from './pages/dashboard/Dealer'
 import Dealerships from './pages/dealerships/Dealerships'
@@ -25,7 +25,7 @@ export default function App() {
           <Route path="/invite" element={<AcceptInvite />} />
           <Route path="/accept-invite" element={<AcceptInvite />} />
           <Route path="/welcome" element={<Welcome />} />
-          <Route path="/admin" element={<Admin />} />
+          <Route path="/users" element={<Users />} />
           <Route path="/associate" element={<Associate />} />
           <Route path="/dealer" element={<Dealer />} />
           <Route path="/purchases" element={<Purchases />} />

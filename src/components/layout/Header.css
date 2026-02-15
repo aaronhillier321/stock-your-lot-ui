@@ -21,16 +21,15 @@
   color: inherit;
 }
 
-.app-header-logo-link:hover .app-header-logo {
+.app-header-logo-link:hover .app-header-logo-img {
   opacity: 0.95;
 }
 
-.app-header-logo {
-  margin: 0;
-  font-size: 1.25rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: #e6d87a;
+.app-header-logo-img {
+  display: block;
+  height: 56px;
+  width: auto;
+  object-fit: contain;
   transition: opacity 0.15s;
 }
 
@@ -164,4 +163,14 @@
 
 .app-header-nav:hover {
   background: rgba(255, 255, 255, 0.25);
+}
+
+.app-header-nav.active {
+  background: #ffb201;
+  color: var(--header-blue);
+}
+
+.app-header-nav.active:hover {
+  background: #ffb201;
+  color: var(--header-blue);
 }

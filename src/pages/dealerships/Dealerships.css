@@ -54,28 +54,12 @@
   border-radius: var(--radius-sm);
 }
 
-.dealerships-form {
-  flex-shrink: 0;
-  padding: 16px;
-  margin-bottom: 16px;
-  background: #f8f9fa;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-}
-
 .dealerships-body {
   flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-}
-
-.dealerships-form-title {
-  margin: 0 0 12px;
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: var(--text);
 }
 
 .dealerships-label {
@@ -92,6 +76,10 @@
   margin-bottom: 0;
 }
 
+.dealerships-label-text {
+  white-space: nowrap;
+}
+
 .dealerships-required {
   color: var(--error);
 }
@@ -101,7 +89,7 @@
   font-family: inherit;
   font-size: 1rem;
   color: var(--text);
-  background: var(--bg-card);
+  background: var(--bg-page);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
 }
@@ -118,10 +106,86 @@
   gap: 12px;
 }
 
-.dealerships-form-actions {
+.dealerships-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.dealerships-modal {
+  width: 100%;
+  max-width: 480px;
+  padding: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+}
+
+.dealerships-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.dealerships-modal-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.dealerships-modal-close {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s;
+}
+
+.dealerships-modal-close:hover {
+  color: var(--text);
+  background: #f0f2f5;
+}
+
+.dealerships-modal-form {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dealerships-modal-form .dealerships-label {
+  margin-bottom: 0;
+}
+
+.dealerships-modal-error {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--error);
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+}
+
+.dealerships-modal-actions {
   display: flex;
   gap: 12px;
-  margin-top: 20px;
+  margin-top: 8px;
 }
 
 .dealerships-cancel-btn {
