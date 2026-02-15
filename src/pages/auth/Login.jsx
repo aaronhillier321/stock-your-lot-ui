@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate, useLocation, Navigate } from 'react-router-dom'
-import { getApiBase, getStoredToken, setStoredToken, setStoredUserName, setStoredUserRole, setStoredDealerName, getLandingRoute } from '../../api'
+import { getApiBase, getStoredToken, setStoredToken, setStoredUserName, setStoredUserRole, setStoredUserRoles, setStoredDealerName, getLandingRoute } from '../../api'
 import './Login.css'
 
 export default function Login() {
@@ -45,6 +45,8 @@ export default function Login() {
       if (data.username) setStoredUserName(data.username)
       const dealerName = data.dealerName ?? data.dealershipName
       if (dealerName != null) setStoredDealerName(dealerName)
+      const roles = Array.isArray(data.roles) ? data.roles : []
+      setStoredUserRoles(roles)
       const landingRole = getLandingRoute(data.roles, data.dealershipRoles)
       setStoredUserRole(landingRole)
       navigate('/purchases', { state: { name: data.username, email: data.email } })

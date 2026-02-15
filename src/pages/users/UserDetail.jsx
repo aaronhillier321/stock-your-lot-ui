@@ -9,6 +9,12 @@ function formatRoles(roles) {
   return String(roles)
 }
 
+function toLocalDateStr(dateVal) {
+  if (dateVal == null) return ''
+  if (typeof dateVal === 'string') return dateVal.slice(0, 10)
+  return ''
+}
+
 const ROLE_OPTIONS = ['BUYER', 'DEALER', 'ADMIN']
 
 function toFormData(user) {
@@ -19,23 +25,48 @@ function toFormData(user) {
   let roles = user.roles ?? user.role ?? user.userRole ?? 'BUYER'
   if (!Array.isArray(roles)) roles = roles ? [roles] : ['BUYER']
   if (roles.length === 0) roles = ['BUYER']
+  const rawRules = user.userCommissionRules ?? user.commissionRules ?? []
+  const commissionRules = Array.isArray(rawRules)
+    ? rawRules.map((a) => ({
+        ruleId: a.ruleId ?? a.rule_id ?? '',
+        startDate: toLocalDateStr(a.startDate ?? a.start_date),
+        endDate: toLocalDateStr(a.endDate ?? a.end_date),
+        level: a.level != null ? a.level : 1,
+        numberOfSales: a.numberOfSales ?? a.number_of_sales ?? null,
+      }))
+    : []
   return {
     firstName,
     lastName,
     email: (user.email ?? user.userName ?? '').toString().trim(),
     phone: (user.phone ?? user.phoneNumber ?? '').toString().trim(),
     roles: [...roles],
+    commissionRules,
   }
 }
 
 function toUpdateBody(form) {
-  return {
+  const body = {
     firstName: form.firstName.trim(),
     lastName: form.lastName.trim(),
     email: form.email.trim(),
     phoneNumber: form.phone.trim(),
     roles: form.roles.length ? form.roles : ['BUYER'],
   }
+  if (form.commissionRules && form.commissionRules.length > 0) {
+    body.userCommissionRules = form.commissionRules
+      .filter((r) => r.ruleId && r.startDate)
+      .map((r) => ({
+        ruleId: r.ruleId,
+        startDate: r.startDate,
+        endDate: r.endDate || null,
+        level: r.level != null && r.level !== '' ? Number(r.level) : 1,
+        numberOfSales: r.numberOfSales != null && r.numberOfSales !== '' ? Number(r.numberOfSales) : null,
+      }))
+  } else {
+    body.userCommissionRules = []
+  }
+  return body
 }
 
 export default function UserDetail() {
@@ -48,6 +79,23 @@ export default function UserDetail() {
   const [formData, setFormData] = useState(null)
   const [submitError, setSubmitError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [availableRules, setAvailableRules] = useState([])
+
+  useEffect(() => {
+    if (!token) return
+    let cancelled = false
+    async function fetchRules() {
+      try {
+        const res = await authFetch(`${getApiBase()}/api/commission-rules`)
+        if (res.ok && !cancelled) {
+          const data = await res.json()
+          setAvailableRules(Array.isArray(data) ? data : [])
+        }
+      } catch (_) {}
+    }
+    fetchRules()
+    return () => { cancelled = true }
+  }, [token])
 
   useEffect(() => {
     let cancelled = false
@@ -81,6 +129,11 @@ export default function UserDetail() {
     fetchUser()
     return () => { cancelled = true }
   }, [id, token])
+
+  function getRuleName(ruleId) {
+    const r = availableRules.find((x) => x.id === ruleId)
+    return r ? (r.ruleName ?? r.rule_name ?? r.id) : ruleId ?? '—'
+  }
 
   function startEditing() {
     setEditing(true)
@@ -133,129 +186,297 @@ export default function UserDetail() {
   }
   if (!user) return null
 
-  const displayName = (user.name ?? user.userName ?? user.fullName ?? user.displayName ?? '').toString().trim() || '—'
+  const first = (user.firstName ?? '').toString().trim()
+  const last = (user.lastName ?? '').toString().trim()
+  const fromParts = [first, last].filter(Boolean).join(' ').trim()
+  const displayName = fromParts || (user.name ?? user.userName ?? user.fullName ?? user.displayName ?? '').toString().trim() || '—'
   const email = (user.email ?? user.userName ?? '').toString().trim() || '—'
   const form = formData
 
-  const content = (
-    <div className="user-detail-card">
-      <dl className="user-detail-dl">
-        <dt>First Name</dt>
-        <dd className="user-detail-dd">
-          {!editing ? (user.firstName ?? displayName.split(/\s+/)[0] ?? '—') : (
+  const infoLine = !editing
+    ? [email, user.phone ?? user.phoneNumber, formatRoles(user.roles ?? user.role ?? user.userRole)].filter(Boolean).join(' · ') || '—'
+    : null
+
+  const userHeader = (
+    <header className="user-detail-header">
+      {!editing ? (
+        <>
+          <h2 className="user-detail-title">{displayName}</h2>
+          <p className="user-detail-info-line">{infoLine}</p>
+        </>
+      ) : (
+        <div className="user-detail-header-edit">
+          <div className="user-detail-header-edit-row">
             <input
               type="text"
-              className="user-detail-input"
+              className="user-detail-input user-detail-header-input"
               value={form.firstName}
               onChange={(e) => setFormData((f) => ({ ...f, firstName: e.target.value }))}
               placeholder="First name"
               required
             />
-          )}
-        </dd>
-        <dt>Last Name</dt>
-        <dd className="user-detail-dd">
-          {!editing ? (user.lastName ?? (displayName.split(/\s+/).slice(1).join(' ') || '—')) : (
             <input
               type="text"
-              className="user-detail-input"
+              className="user-detail-input user-detail-header-input"
               value={form.lastName}
               onChange={(e) => setFormData((f) => ({ ...f, lastName: e.target.value }))}
               placeholder="Last name"
               required
             />
-          )}
-        </dd>
-        <dt>Email</dt>
-        <dd className="user-detail-dd">
-          {!editing ? email : (
             <input
               type="email"
-              className="user-detail-input"
+              className="user-detail-input user-detail-header-input"
               value={form.email}
               onChange={(e) => setFormData((f) => ({ ...f, email: e.target.value }))}
-              placeholder="user@example.com"
+              placeholder="Email"
               required
             />
-          )}
-        </dd>
-        <dt>Phone</dt>
-        <dd className="user-detail-dd">
-          {!editing ? (user.phone ?? user.phoneNumber ?? '—') : (
             <input
               type="tel"
-              className="user-detail-input"
+              className="user-detail-input user-detail-header-input"
               value={form.phone}
               onChange={(e) => setFormData((f) => ({ ...f, phone: e.target.value }))}
-              placeholder="(555) 123-4567"
+              placeholder="Phone"
               required
             />
-          )}
-        </dd>
-        <dt>Roles</dt>
-        <dd className="user-detail-dd user-detail-dd-roles">
-          {!editing ? formatRoles(user.roles ?? user.role ?? user.userRole) : (
-            <div className="user-detail-roles-edit">
-              <ul className="user-detail-roles-list">
-                {form.roles.map((role, idx) => (
-                  <li key={`${role}-${idx}`} className="user-detail-role-chip">
-                    <span className="user-detail-role-label">{role === 'BUYER' ? 'Buyer' : role === 'DEALER' ? 'Dealer' : 'Admin'}</span>
-                    <button
-                      type="button"
-                      className="user-detail-role-remove"
-                      onClick={() => setFormData((f) => ({
-                        ...f,
-                        roles: f.roles.filter((_, i) => i !== idx),
-                      }))}
-                      aria-label={`Remove ${role}`}
-                      title={`Remove ${role}`}
-                    >
-                      <span aria-hidden>−</span>
-                    </button>
-                  </li>
+          </div>
+          <div className="user-detail-header-roles">
+            <ul className="user-detail-roles-list">
+              {form.roles.map((role, idx) => (
+                <li key={`${role}-${idx}`} className="user-detail-role-chip">
+                  <span className="user-detail-role-label">{role === 'BUYER' ? 'Buyer' : role === 'DEALER' ? 'Dealer' : 'Admin'}</span>
+                  <button
+                    type="button"
+                    className="user-detail-role-remove"
+                    onClick={() => setFormData((f) => ({ ...f, roles: f.roles.filter((_, i) => i !== idx) }))}
+                    aria-label={`Remove ${role}`}
+                    title={`Remove ${role}`}
+                  >
+                    <span aria-hidden>−</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <div className="user-detail-roles-add">
+              <select
+                className="user-detail-input user-detail-select user-detail-roles-select"
+                value=""
+                onChange={(e) => {
+                  const v = e.target.value
+                  if (v) {
+                    setFormData((f) => ({ ...f, roles: [...f.roles, v] }))
+                    e.target.value = ''
+                  }
+                }}
+                aria-label="Add role"
+                disabled={!ROLE_OPTIONS.some((r) => !form.roles.includes(r))}
+              >
+                <option value="">Add role…</option>
+                {ROLE_OPTIONS.filter((r) => !form.roles.includes(r)).map((r) => (
+                  <option key={r} value={r}>
+                    {r === 'BUYER' ? 'Buyer' : r === 'DEALER' ? 'Dealer' : 'Admin'}
+                  </option>
                 ))}
-              </ul>
-              <div className="user-detail-roles-add">
-                <select
-                  className="user-detail-input user-detail-select user-detail-roles-select"
-                  value=""
-                  onChange={(e) => {
-                    const v = e.target.value
-                    if (v) {
-                      setFormData((f) => ({ ...f, roles: [...f.roles, v] }))
-                      e.target.value = ''
-                    }
-                  }}
-                  aria-label="Add role"
-                  disabled={!ROLE_OPTIONS.some((r) => !form.roles.includes(r))}
-                >
-                  <option value="">Add role…</option>
-                  {ROLE_OPTIONS.filter((r) => !form.roles.includes(r)).map((r) => (
-                    <option key={r} value={r}>
-                      {r === 'BUYER' ? 'Buyer' : r === 'DEALER' ? 'Dealer' : 'Admin'}
-                    </option>
-                  ))}
-                </select>
-                <button
-                  type="button"
-                  className="user-detail-role-add-btn"
-                  onClick={() => {
-                    const available = ROLE_OPTIONS.filter((r) => !form.roles.includes(r))
-                    if (available.length) {
-                      setFormData((f) => ({ ...f, roles: [...f.roles, available[0]] }))
-                    }
-                  }}
-                  aria-label="Add role"
-                  title="Add role"
-                  disabled={!ROLE_OPTIONS.some((r) => !form.roles.includes(r))}
-                >
-                  <span aria-hidden>+</span>
-                </button>
-              </div>
+              </select>
+              <button
+                type="button"
+                className="user-detail-role-add-btn"
+                onClick={() => {
+                  const available = ROLE_OPTIONS.filter((r) => !form.roles.includes(r))
+                  if (available.length) setFormData((f) => ({ ...f, roles: [...f.roles, available[0]] }))
+                }}
+                aria-label="Add role"
+                title="Add role"
+                disabled={!ROLE_OPTIONS.some((r) => !form.roles.includes(r))}
+              >
+                <span aria-hidden>+</span>
+              </button>
             </div>
+          </div>
+        </div>
+      )}
+    </header>
+  )
+
+  const commissionRulesData = editing ? form.commissionRules : (user.userCommissionRules ?? user.commissionRules ?? [])
+
+  const commissionTable = (
+    <div className="user-detail-commission-card">
+      <h3 className="user-detail-commission-title">Commission Rules</h3>
+      <div className="user-detail-commission-table-wrap">
+      <table className="user-detail-commission-table">
+        <thead>
+          <tr>
+            <th>Rule</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Level</th>
+            <th>Number of Sales</th>
+            {editing && <th className="user-detail-commission-th-action">Remove</th>}
+          </tr>
+        </thead>
+        <tbody>
+          {!editing ? (
+            commissionRulesData.length > 0 ? (
+              commissionRulesData.map((a, idx) => (
+                <tr key={idx}>
+                  <td>{getRuleName(a.ruleId ?? a.rule_id)}</td>
+                  <td>{toLocalDateStr(a.startDate ?? a.start_date) || '—'}</td>
+                  <td>{toLocalDateStr(a.endDate ?? a.end_date) || '—'}</td>
+                  <td>{a.level != null ? a.level : '—'}</td>
+                  <td>{a.numberOfSales != null ? a.numberOfSales : '—'}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={5} className="user-detail-commission-empty">No commission rules.</td>
+              </tr>
+            )
+          ) : form.commissionRules.length === 0 ? (
+            <tr>
+              <td colSpan={6} className="user-detail-commission-empty">No commission rules. Use the + button below to add.</td>
+            </tr>
+          ) : (
+            form.commissionRules.map((r, idx) => (
+              <tr key={idx}>
+                <td>
+                  <select
+                    className="user-detail-input user-detail-commission-table-select"
+                    value={r.ruleId}
+                    onChange={(e) =>
+                      setFormData((f) => ({
+                        ...f,
+                        commissionRules: f.commissionRules.map((x, i) =>
+                          i === idx ? { ...x, ruleId: e.target.value } : x
+                        ),
+                      }))
+                    }
+                    required
+                  >
+                    <option value="">Select rule</option>
+                    {availableRules.map((rule) => (
+                      <option key={rule.id} value={rule.id}>
+                        {rule.ruleName ?? rule.rule_name} ({rule.amount} {rule.commissionType ?? rule.commission_type})
+                      </option>
+                    ))}
+                  </select>
+                </td>
+                <td>
+                  <input
+                    type="date"
+                    className="user-detail-input user-detail-commission-table-input"
+                    value={r.startDate}
+                    onChange={(e) =>
+                      setFormData((f) => ({
+                        ...f,
+                        commissionRules: f.commissionRules.map((x, i) =>
+                          i === idx ? { ...x, startDate: e.target.value } : x
+                        ),
+                      }))
+                    }
+                    required
+                    aria-label="Start date"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="date"
+                    className="user-detail-input user-detail-commission-table-input"
+                    value={r.endDate}
+                    onChange={(e) =>
+                      setFormData((f) => ({
+                        ...f,
+                        commissionRules: f.commissionRules.map((x, i) =>
+                          i === idx ? { ...x, endDate: e.target.value } : x
+                        ),
+                      }))
+                    }
+                    aria-label="End date"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    className="user-detail-input user-detail-commission-table-num"
+                    min={0}
+                    value={r.level === null || r.level === '' ? '' : r.level}
+                    onChange={(e) =>
+                      setFormData((f) => ({
+                        ...f,
+                        commissionRules: f.commissionRules.map((x, i) =>
+                          i === idx ? { ...x, level: e.target.value === '' ? 1 : Number(e.target.value) } : x
+                        ),
+                      }))
+                    }
+                    aria-label="Level"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    className="user-detail-input user-detail-commission-table-num"
+                    min={0}
+                    value={r.numberOfSales == null || r.numberOfSales === '' ? '' : r.numberOfSales}
+                    onChange={(e) =>
+                      setFormData((f) => ({
+                        ...f,
+                        commissionRules: f.commissionRules.map((x, i) =>
+                          i === idx
+                            ? { ...x, numberOfSales: e.target.value === '' ? null : Number(e.target.value) }
+                            : x
+                        ),
+                      }))
+                    }
+                    aria-label="Number of sales"
+                  />
+                </td>
+                <td className="user-detail-commission-td-action">
+                  <button
+                    type="button"
+                    className="user-detail-role-remove"
+                    onClick={() =>
+                      setFormData((f) => ({
+                        ...f,
+                        commissionRules: f.commissionRules.filter((_, i) => i !== idx),
+                      }))
+                    }
+                    aria-label="Remove rule"
+                    title="Remove"
+                  >
+                    <span aria-hidden>−</span>
+                  </button>
+                </td>
+              </tr>
+            ))
           )}
-        </dd>
-      </dl>
+        </tbody>
+      </table>
+      </div>
+      {editing && (
+        <div className="user-detail-commission-add">
+          <button
+            type="button"
+            className="user-detail-role-add-btn"
+            onClick={() => {
+              const today = new Date().toISOString().slice(0, 10)
+              const firstRuleId = availableRules.length ? availableRules[0].id : ''
+              setFormData((f) => ({
+                ...f,
+                commissionRules: [
+                  ...f.commissionRules,
+                  { ruleId: firstRuleId, startDate: today, endDate: '', level: 1, numberOfSales: null },
+                ],
+              }))
+            }}
+            aria-label="Add commission rule"
+            title="Add commission rule"
+            disabled={availableRules.length === 0}
+          >
+            <span aria-hidden>+</span>
+          </button>
+          <span className="user-detail-commission-add-label">Add commission rule</span>
+        </div>
+      )}
     </div>
   )
 
@@ -278,25 +499,27 @@ export default function UserDetail() {
           </div>
         )}
       </div>
-      <header className="user-detail-header">
-        <h2 className="user-detail-title">{displayName}</h2>
-        <p className="user-detail-info-line">{email}</p>
-      </header>
 
-      <section className="user-detail-section">
-        {submitError && (
-          <div className="user-detail-submit-error" role="alert">
-            {submitError}
-          </div>
-        )}
-        {editing ? (
-          <form id="user-detail-form" className="user-detail-form" onSubmit={handleSubmit}>
-            {content}
-          </form>
-        ) : (
-          content
-        )}
-      </section>
+      {editing ? (
+        <form id="user-detail-form" className="user-detail-form" onSubmit={handleSubmit}>
+          {userHeader}
+          <section className="user-detail-section">
+            {submitError && (
+              <div className="user-detail-submit-error" role="alert">
+                {submitError}
+              </div>
+            )}
+            {commissionTable}
+          </section>
+        </form>
+      ) : (
+        <>
+          {userHeader}
+          <section className="user-detail-section">
+            {commissionTable}
+          </section>
+        </>
+      )}
     </div>
   )
 }

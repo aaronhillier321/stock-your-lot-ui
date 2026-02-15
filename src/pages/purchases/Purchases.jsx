@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Navigate, Link } from 'react-router-dom'
-import { getApiBase, authFetch, getStoredToken, getStoredUserRole } from '../../api'
+import { getApiBase, authFetch, getStoredToken } from '../../api'
+import { hasRole } from '../../services/authService'
 import PurchasesTable from '../../components/PurchasesTable'
 import './Purchases.css'
 
@@ -35,7 +36,6 @@ const YEARS = [currentYear, currentYear - 1]
 
 export default function Purchases() {
   const token = getStoredToken()
-  const role = getStoredUserRole()
   const [purchases, setPurchases] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -44,7 +44,7 @@ export default function Purchases() {
   const [customStartDate, setCustomStartDate] = useState('')
   const [customEndDate, setCustomEndDate] = useState('')
 
-  const isAdmin = role === 'admin'
+  const isAdmin = hasRole('ADMIN')
   const baseUrl = isAdmin ? '/api/purchases' : '/api/purchases/me'
 
   const monthsForYear = useMemo(() => {

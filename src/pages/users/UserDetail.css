@@ -149,7 +149,33 @@
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
-  max-width: 600px;
+}
+
+/* Header edit row (when editing) */
+.user-detail-header-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.user-detail-header-edit-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.user-detail-header-input {
+  min-width: 0;
+  flex: 1;
+  max-width: 200px;
+}
+
+.user-detail-header-roles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
 }
 
 .user-detail-dl {
@@ -299,5 +325,108 @@
   opacity: 0.5;
   cursor: not-allowed;
   border-color: var(--border);
+  color: var(--text-muted);
+}
+
+/* Commission Rules (body only) */
+.user-detail-commission-card {
+  padding: 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  min-width: 0;
+  overflow: hidden;
+}
+
+.user-detail-commission-title {
+  margin: 0 0 16px;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.user-detail-commission-table-wrap {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.user-detail-commission-table {
+  width: 100%;
+  min-width: 600px;
+  table-layout: fixed;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.user-detail-commission-table th,
+.user-detail-commission-table td {
+  padding: 6px 8px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+  overflow: hidden;
+}
+
+.user-detail-commission-table thead th {
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--bg-page);
+}
+
+.user-detail-commission-table th:nth-child(1),
+.user-detail-commission-table td:nth-child(1) { width: 22%; }
+.user-detail-commission-table th:nth-child(2),
+.user-detail-commission-table td:nth-child(2) { width: 14%; }
+.user-detail-commission-table th:nth-child(3),
+.user-detail-commission-table td:nth-child(3) { width: 14%; }
+.user-detail-commission-table th:nth-child(4),
+.user-detail-commission-table td:nth-child(4) { width: 10%; }
+.user-detail-commission-table th:nth-child(5),
+.user-detail-commission-table td:nth-child(5) { width: 14%; }
+.user-detail-commission-table th:nth-child(6),
+.user-detail-commission-table td:nth-child(6) { width: 8%; }
+
+.user-detail-commission-table tbody tr:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.user-detail-commission-th-action,
+.user-detail-commission-td-action {
+  width: 60px;
+  text-align: center;
+}
+
+.user-detail-commission-empty {
+  color: var(--text-muted);
+  font-style: italic;
+  text-align: center;
+  padding: 16px;
+}
+
+.user-detail-commission-table-select,
+.user-detail-commission-table-input,
+.user-detail-commission-table-num {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  font-size: 0.8125rem;
+  padding: 4px 6px;
+}
+
+.user-detail-commission-table-num {
+  max-width: 56px;
+}
+
+.user-detail-commission-add {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.user-detail-commission-add-label {
+  font-size: 0.875rem;
   color: var(--text-muted);
 }

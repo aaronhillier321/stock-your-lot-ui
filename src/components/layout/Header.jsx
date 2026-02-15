@@ -1,12 +1,6 @@
 import { useNavigate, Link, NavLink } from 'react-router-dom'
-import {
-  getStoredUserName,
-  getStoredUserRole,
-  clearStoredToken,
-  clearStoredUserName,
-  clearStoredUserRole,
-  clearStoredDealerName,
-} from '../../api'
+import { getStoredUserName, clearStoredToken, clearStoredUserName, clearStoredUserRole, clearStoredDealerName } from '../../api'
+import { hasRole } from '../../services/authService'
 import sylLogo from '../../../assets/syl-logo.png'
 import './Header.css'
 
@@ -59,7 +53,7 @@ function HelpIcon() {
 export default function Header() {
   const navigate = useNavigate()
   const name = getStoredUserName()
-  const role = getStoredUserRole()
+  const isAdmin = hasRole('ADMIN')
   const displayName = formatDisplayName(name)
 
   function handleSignOut() {
@@ -84,7 +78,7 @@ export default function Header() {
             <NavLink to="/dealerships" className="app-header-nav" end={false}>
               Dealerships
             </NavLink>
-            {role === 'admin' && (
+            {isAdmin && (
               <NavLink to="/users" className="app-header-nav" end={false}>
                 Users
               </NavLink>

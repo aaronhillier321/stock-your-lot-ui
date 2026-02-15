@@ -3,6 +3,7 @@ const HOSTED_API_URL = 'http://136.118.5.61'
 const TOKEN_KEY = 'stock-your-lot-token'
 const USER_NAME_KEY = 'stock-your-lot-user-name'
 const USER_ROLE_KEY = 'stock-your-lot-user-role'
+const USER_ROLES_KEY = 'stock-your-lot-user-roles'
 const DEALER_NAME_KEY = 'stock-your-lot-dealer-name'
 
 export function getApiBase() {
@@ -53,6 +54,29 @@ export function setStoredUserRole(role) {
 
 export function clearStoredUserRole() {
   localStorage.removeItem(USER_ROLE_KEY)
+}
+
+export function getStoredUserRoles() {
+  try {
+    const raw = localStorage.getItem(USER_ROLES_KEY)
+    if (raw == null) return []
+    const parsed = JSON.parse(raw)
+    return Array.isArray(parsed) ? parsed : []
+  } catch {
+    return []
+  }
+}
+
+export function setStoredUserRoles(roles) {
+  if (Array.isArray(roles) && roles.length > 0) {
+    localStorage.setItem(USER_ROLES_KEY, JSON.stringify(roles))
+  } else {
+    localStorage.removeItem(USER_ROLES_KEY)
+  }
+}
+
+export function clearStoredUserRoles() {
+  localStorage.removeItem(USER_ROLES_KEY)
 }
 
 export function getStoredDealerName() {
@@ -116,6 +140,7 @@ export function clearAuth() {
   clearStoredToken()
   clearStoredUserName()
   clearStoredUserRole()
+  clearStoredUserRoles()
   clearStoredDealerName()
 }
 

@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import { Navigate } from 'react-router-dom'
-import { getStoredToken, getStoredUserRole, getApiBase, authFetch } from '../../api'
+import { getStoredToken, getApiBase, authFetch } from '../../api'
+import { hasRole } from '../../services/authService'
 import UsersTable from '../../components/UsersTable'
 import './Users.css'
 
 export default function Users() {
   const token = getStoredToken()
-  const role = getStoredUserRole()
+  const isAdmin = hasRole('ADMIN')
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -16,7 +17,7 @@ export default function Users() {
   const [addUserSending, setAddUserSending] = useState(false)
 
   useEffect(() => {
-    if (!token || role !== 'admin') return
+    if (!token || !isAdmin) return
     let cancelled = false
     async function fetchUsers() {
       setLoading(true)
@@ -43,7 +44,7 @@ export default function Users() {
     }
     fetchUsers()
     return () => { cancelled = true }
-  }, [token, role])
+  }, [token, isAdmin])
 
   async function handleAddUser(e) {
     e.preventDefault()
@@ -78,7 +79,7 @@ export default function Users() {
   }
 
   if (!token) return <Navigate to="/" replace />
-  if (role !== 'admin') return <Navigate to="/purchases" replace />
+  if (!isAdmin) return <Navigate to="/purchases" replace />
 
   return (
     <div className="users-page">
