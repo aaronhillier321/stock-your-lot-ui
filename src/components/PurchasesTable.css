@@ -32,16 +32,6 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  td {
-    justify-content: center!important;
-  }
-  th {
-    justify-content: center!important;
-    /* width: auto!important; */
-    div {
-      justify-content: center!important;
-    }
-  }
 }
 
 /* Table container scrolls; horizontal scroll so pinned column stays fixed */

@@ -13,38 +13,43 @@ function buildColumns(showBuyerColumn, onPdfClick, loadingFileId) {
     {
       accessorKey: 'vin',
       header: 'VIN',
-      // size: 'auto'
+      size: 180,
+      minSize: 180,
     },
     {
-      
       accessorKey: 'date',
       header: 'Date',
-      minSize: 0
+      size: 160,
+      minSize: 160,
     },
     {
       id: 'dealership',
       accessorFn: (row) => (row.dealershipName ?? row.dealership ?? '—').toString(),
       header: 'Dealership',
-      // size: 140,
+      size: 160,
+      minSize: 120,
     },
     {
       id: 'vehicle',
       accessorFn: (row) =>
         [row.vehicleYear, row.vehicleMake, row.vehicleModel].filter(Boolean).join(' ') || '—',
       header: 'Vehicle',
-      // size: 180,
+      size: 200,
+      minSize: 150,
     },
     {
       accessorKey: 'miles',
       header: 'Miles',
-      // size: 90,
+      size: 130,
+      minSize: 130,
       Cell: ({ cell }) =>
         cell.getValue() != null ? Number(cell.getValue()).toLocaleString() : '—',
     },
     {
       accessorKey: 'purchasePrice',
       header: 'Purchase Price',
-      // size: 120,
+      size: 140,
+      minSize: 140,
       Cell: ({ cell }) =>
         cell.getValue() != null
           ? `$${Number(cell.getValue()).toLocaleString()}`
@@ -54,59 +59,65 @@ function buildColumns(showBuyerColumn, onPdfClick, loadingFileId) {
       id: 'billOfSale',
       accessorFn: (row) => row.billOfSaleFileId ?? row.billOfSaleFileID ?? null,
       header: 'Bill of Sale',
-      // size: 100,
+      size: 145,
+      minSize: 145,
       enableColumnFilter: false,
       Cell: ({ cell }) => {
         const id = cell.getValue()
         if (id == null) return ''
         const loading = id === loadingFileId
         return (
-          <button
-            type="button"
-            className="purchases-table-pdf-btn"
-            onClick={(e) => {
-              e.stopPropagation()
-              onPdfClick(id, 'Bill of Sale')
-            }}
-            title="View Bill of Sale"
-            disabled={!onPdfClick || loading}
-          >
-            {loading ? (
-              <Loader size="sm" className="purchases-table-pdf-loader" />
-            ) : (
-              <img src={pdfIcon} alt="Bill of Sale" className="purchases-table-pdf-icon" />
-            )}
-          </button>
+          <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+            <button
+              type="button"
+              className="purchases-table-pdf-btn"
+              onClick={(e) => {
+                e.stopPropagation()
+                onPdfClick(id, 'Bill of Sale')
+              }}
+              title="View Bill of Sale"
+              disabled={!onPdfClick || loading}
+            >
+              {loading ? (
+                <Loader size="sm" className="purchases-table-pdf-loader" />
+              ) : (
+                <img src={pdfIcon} alt="Bill of Sale" className="purchases-table-pdf-icon" />
+              )}
+            </button>
+          </div>
         )
       },
     },
     {
       id: 'conditionReport',
       accessorFn: (row) => row.conditionReportFileId ?? row.conditionReportFileID ?? null,
-      header: 'Condition Report',
-      // size: 120,
+      header: 'Condition\nReport',
+      size: 200,
+      minSize: 200,
       enableColumnFilter: false,
       Cell: ({ cell }) => {
         const id = cell.getValue()
         if (id == null) return ''
         const loading = id === loadingFileId
         return (
-          <button
-            type="button"
-            className="purchases-table-pdf-btn"
-            onClick={(e) => {
-              e.stopPropagation()
-              onPdfClick(id, 'Condition Report')
-            }}
-            title="View Condition Report"
-            disabled={!onPdfClick || loading}
-          >
-            {loading ? (
-              <Loader size="sm" className="purchases-table-pdf-loader" />
-            ) : (
-              <img src={pdfIcon} alt="Condition Report" className="purchases-table-pdf-icon" />
-            )}
-          </button>
+          <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+            <button
+              type="button"
+              className="purchases-table-pdf-btn"
+              onClick={(e) => {
+                e.stopPropagation()
+                onPdfClick(id, 'Condition Report')
+              }}
+              title="View Condition Report"
+              disabled={!onPdfClick || loading}
+            >
+              {loading ? (
+                <Loader size="sm" className="purchases-table-pdf-loader" />
+              ) : (
+                <img src={pdfIcon} alt="Condition Report" className="purchases-table-pdf-icon" />
+              )}
+            </button>
+          </div>
         )
       },
     },
@@ -117,7 +128,8 @@ function buildColumns(showBuyerColumn, onPdfClick, loadingFileId) {
       accessorFn: (row) =>
         (row.buyerEmail ?? row.buyer?.email ?? '—').toString(),
       header: 'Buyer',
-      // size: 140,
+      size: 200,
+      minSize: 200,
     })
   }
   return cols
@@ -183,10 +195,10 @@ export default function PurchasesTable({ purchases = [], showBuyerColumn = false
       style: { minWidth: 'max-content' },
     },
     mantineTableHeadCellProps: {
-      style: { padding: '12px 14px', display: 'flex', justifyContent: 'center', width: 'auto' },
+      style: { padding: '12px 14px', whiteSpace: 'normal!important'},
     },
     mantineTableBodyCellProps: {
-      style: { padding: '12px 14px', display: 'flex', justifyContent: 'center', width: 'auto' },
+      style: { padding: '12px 14px'},
     },
     mantineTableBodyRowProps: ({ row }) => ({
       onClick: () => {
