@@ -188,6 +188,10 @@ export default function PurchaseDetail() {
               <input type="text" className="purchase-detail-input" value={form.vin} onChange={(e) => setFormData((f) => ({ ...f, vin: e.target.value }))} maxLength={17} />
             )}
           </dd>
+        </dl>
+      </div>
+      <div className="purchase-detail-col">
+        <dl className="purchase-detail-dl">
           <dt>Vehicle</dt>
           <dd className="purchase-detail-dd">
             {!editing ? vehicleLine : (
@@ -204,10 +208,6 @@ export default function PurchaseDetail() {
               <input type="text" className="purchase-detail-input" value={form.vehicleTrimLevel} onChange={(e) => setFormData((f) => ({ ...f, vehicleTrimLevel: e.target.value }))} />
             )}
           </dd>
-        </dl>
-      </div>
-      <div className="purchase-detail-col">
-        <dl className="purchase-detail-dl">
           <dt>Auction platform</dt>
           <dd className="purchase-detail-dd">
             {!editing ? (purchase.auctionPlatform ?? '—') : (
@@ -220,6 +220,10 @@ export default function PurchaseDetail() {
               <input type="number" className="purchase-detail-input" value={form.miles} onChange={(e) => setFormData((f) => ({ ...f, miles: e.target.value }))} min={0} />
             )}
           </dd>
+        </dl>
+      </div>
+      <div className="purchase-detail-col">
+        <dl className="purchase-detail-dl">
           <dt>Purchase price</dt>
           <dd className="purchase-detail-dd">
             {!editing ? (purchase.purchasePrice != null ? `$${Number(purchase.purchasePrice).toLocaleString()}` : '—') : (
@@ -240,6 +244,106 @@ export default function PurchaseDetail() {
           )}
         </dl>
       </div>
+    </div>
+  )
+
+  const commissions = purchase.commissions ?? []
+  const purchasePriceNum = purchase.purchasePrice != null ? Number(purchase.purchasePrice) : null
+  const serviceFeeNum = purchase.serviceFee != null ? Number(purchase.serviceFee) : null
+  const totalInvoiceNum =
+    purchasePriceNum != null && serviceFeeNum != null
+      ? purchasePriceNum + serviceFeeNum
+      : purchasePriceNum != null
+        ? purchasePriceNum
+        : null
+  const formatMoney = (n) =>
+    n != null ? `$${n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—'
+
+  const totalCommissionsNum = commissions.reduce(
+    (sum, c) => sum + (c.amount != null ? Number(c.amount) : 0),
+    0
+  )
+  const profitNum =
+    serviceFeeNum != null && totalCommissionsNum != null
+      ? serviceFeeNum - totalCommissionsNum
+      : serviceFeeNum != null
+        ? serviceFeeNum
+        : null
+
+  const commissionsTable = !editing && (
+    <div className="purchase-detail-commissions">
+      <h3 className="purchase-detail-commissions-title">Commissions</h3>
+      {commissions.length > 0 ? (
+        <div className="purchase-detail-commissions-table-wrap">
+          <table className="purchase-detail-commissions-table">
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Rule</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              {commissions.map((c, idx) => {
+                const username = c.userUsername ?? c.user_username ?? '—'
+                const ruleName = c.ruleName ?? c.rule_name ?? '—'
+                const amount = c.amount != null ? formatMoney(Number(c.amount)) : '—'
+                return (
+                  <tr key={c.userId ?? c.user_id ?? idx}>
+                    <td>{username}</td>
+                    <td>{ruleName}</td>
+                    <td>{amount}</td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <p className="purchase-detail-commissions-empty">No commissions.</p>
+      )}
+    </div>
+  )
+
+  const invoiceSummary = !editing && (
+    <div className="purchase-detail-invoice">
+      <h3 className="purchase-detail-invoice-title">Invoice</h3>
+      <dl className="purchase-detail-invoice-dl">
+        <dt>Purchase Price</dt>
+        <dd>{formatMoney(purchasePriceNum)}</dd>
+        <dt>Service Fee</dt>
+        <dd>{formatMoney(serviceFeeNum)}</dd>
+        <dt>Total Invoice</dt>
+        <dd className="purchase-detail-invoice-total">{formatMoney(totalInvoiceNum)}</dd>
+      </dl>
+    </div>
+  )
+
+  const serviceFeeSummary = !editing && (
+    <div className="purchase-detail-service-fee">
+      <h3 className="purchase-detail-invoice-title">Service Fee</h3>
+      <dl className="purchase-detail-invoice-dl">
+        <dt>Service Fee</dt>
+        <dd>{formatMoney(serviceFeeNum)}</dd>
+        <dt>Commissions</dt>
+        <dd>{formatMoney(totalCommissionsNum)}</dd>
+        <dt>Profit</dt>
+        <dd className="purchase-detail-invoice-total">{formatMoney(profitNum)}</dd>
+      </dl>
+    </div>
+  )
+
+  const rightSideSummary = !editing && (
+    <div className="purchase-detail-right-summary">
+      {serviceFeeSummary}
+      {invoiceSummary}
+    </div>
+  )
+
+  const commissionsAndInvoice = !editing && (
+    <div className="purchase-detail-commissions-row">
+      {commissionsTable}
+      {rightSideSummary}
     </div>
   )
 
@@ -282,6 +386,7 @@ export default function PurchaseDetail() {
         ) : (
           content
         )}
+        {commissionsAndInvoice}
       </section>
     </div>
   )

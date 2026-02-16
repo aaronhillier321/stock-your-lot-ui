@@ -35,6 +35,14 @@ function toFormData(user) {
         numberOfSales: a.numberOfSales ?? a.number_of_sales ?? null,
       }))
     : []
+  const rawDealerships = user.dealershipRoles ?? user.dealership_roles ?? []
+  const dealershipRoles = Array.isArray(rawDealerships)
+    ? rawDealerships.map((d) => ({
+        dealershipId: d.dealershipId ?? d.dealership_id ?? '',
+        dealershipName: d.dealershipName ?? d.dealership_name ?? '',
+        role: (d.role === 'ASSOCIATE' ? 'BUYER' : d.role) || 'BUYER',
+      }))
+    : []
   return {
     firstName,
     lastName,
@@ -42,6 +50,7 @@ function toFormData(user) {
     phone: (user.phone ?? user.phoneNumber ?? '').toString().trim(),
     roles: [...roles],
     commissionRules,
+    dealershipRoles,
   }
 }
 
@@ -80,6 +89,7 @@ export default function UserDetail() {
   const [submitError, setSubmitError] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [availableRules, setAvailableRules] = useState([])
+  const [availableDealerships, setAvailableDealerships] = useState([])
 
   useEffect(() => {
     if (!token) return
@@ -96,6 +106,22 @@ export default function UserDetail() {
     fetchRules()
     return () => { cancelled = true }
   }, [token])
+
+  useEffect(() => {
+    if (!editing || !token) return
+    let cancelled = false
+    async function fetchDealerships() {
+      try {
+        const res = await authFetch(`${getApiBase()}/api/dealerships`)
+        if (res.ok && !cancelled) {
+          const data = await res.json()
+          setAvailableDealerships(Array.isArray(data) ? data : data.dealerships || data.content || [])
+        }
+      } catch (_) {}
+    }
+    fetchDealerships()
+    return () => { cancelled = true }
+  }, [editing, token])
 
   useEffect(() => {
     let cancelled = false
@@ -164,7 +190,55 @@ export default function UserDetail() {
         return
       }
       const data = await res.json()
-      setUser(data?.data ?? data)
+      const updatedUser = data?.data ?? data
+      const userEmail = updatedUser.email ?? user.email
+
+      const initialDealershipIds = new Set(
+        (user.dealershipRoles ?? user.dealership_roles ?? []).map((d) => d.dealershipId ?? d.dealership_id).filter(Boolean)
+      )
+      const formDealershipIds = new Set(
+        formData.dealershipRoles.map((d) => d.dealershipId).filter(Boolean)
+      )
+      for (const dealershipId of initialDealershipIds) {
+        if (!formDealershipIds.has(dealershipId)) {
+          const delRes = await authFetch(`${getApiBase()}/api/users/${id}/dealerships/${dealershipId}`, {
+            method: 'DELETE',
+          })
+          if (!delRes.ok && delRes.status !== 404) {
+            const errData = await delRes.json().catch(() => ({}))
+            setSubmitError(errData.message || errData.error || `Failed to remove from dealership (${delRes.status})`)
+            setSubmitting(false)
+            return
+          }
+        }
+      }
+      for (const d of formData.dealershipRoles) {
+        if (!d.dealershipId) continue
+        const apiRole = d.role === 'BUYER' ? 'ASSOCIATE' : d.role
+        const addRes = await authFetch(`${getApiBase()}/api/users/dealerships`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: userEmail,
+            dealershipId: d.dealershipId,
+            role: apiRole,
+          }),
+        })
+        if (!addRes.ok) {
+          const errData = await addRes.json().catch(() => ({}))
+          setSubmitError(errData.message || errData.error || `Failed to add/update dealership (${addRes.status})`)
+          setSubmitting(false)
+          return
+        }
+      }
+
+      const refetchRes = await authFetch(`${getApiBase()}/api/users/${id}`)
+      if (refetchRes.ok) {
+        const refetchData = await refetchRes.json()
+        setUser(refetchData?.data ?? refetchData)
+      } else {
+        setUser(updatedUser)
+      }
       setEditing(false)
       setFormData(null)
     } catch (err) {
@@ -296,6 +370,161 @@ export default function UserDetail() {
         </div>
       )}
     </header>
+  )
+
+  const DEALERSHIP_ROLE_OPTIONS = [
+    { value: 'BUYER', label: 'BUYER' },
+    { value: 'ADMIN', label: 'ADMIN' },
+  ]
+
+  const dealershipRolesData = editing ? form.dealershipRoles : (user.dealershipRoles ?? user.dealership_roles ?? [])
+
+  const dealershipsTable = (
+    <div className="user-detail-commission-card">
+      <h3 className="user-detail-commission-title">Dealerships</h3>
+      <div className="user-detail-commission-table-wrap">
+        <table className="user-detail-commission-table">
+          <thead>
+            <tr>
+              <th>Dealership</th>
+              <th>Role</th>
+              {editing && <th className="user-detail-commission-th-action">Remove</th>}
+            </tr>
+          </thead>
+          <tbody>
+            {!editing ? (
+              dealershipRolesData.length > 0 ? (
+                dealershipRolesData.map((d) => {
+                  const id = d.dealershipId ?? d.dealership_id
+                  const name = d.dealershipName ?? d.dealership_name ?? '—'
+                  const apiRole = d.role ?? '—'
+                  const displayRole = apiRole === 'ASSOCIATE' ? 'BUYER' : apiRole
+                  return (
+                    <tr key={id}>
+                      <td>
+                        {id ? (
+                          <Link to={`/dealerships/${id}`} className="user-detail-link">
+                            {name}
+                          </Link>
+                        ) : (
+                          name
+                        )}
+                      </td>
+                      <td>{displayRole}</td>
+                    </tr>
+                  )
+                })
+              ) : (
+                <tr>
+                  <td colSpan={2} className="user-detail-commission-empty">No dealerships.</td>
+                </tr>
+              )
+            ) : form.dealershipRoles.length === 0 ? (
+              <tr>
+                <td colSpan={3} className="user-detail-commission-empty">No dealerships. Use the + button below to add.</td>
+              </tr>
+            ) : (
+              form.dealershipRoles.map((d, idx) => (
+                <tr key={d.dealershipId ? `${d.dealershipId}-${idx}` : `new-${idx}`}>
+                  <td>
+                    <select
+                      className="user-detail-input user-detail-commission-table-select"
+                      value={d.dealershipId}
+                      onChange={(e) => {
+                        const sel = availableDealerships.find((x) => (x.id ?? x.dealershipId) === e.target.value)
+                        setFormData((f) => ({
+                          ...f,
+                          dealershipRoles: f.dealershipRoles.map((x, i) =>
+                            i === idx
+                              ? {
+                                  ...x,
+                                  dealershipId: e.target.value,
+                                  dealershipName: sel ? (sel.name ?? sel.dealershipName ?? '') : '',
+                                }
+                              : x
+                          ),
+                        }))
+                      }}
+                      required
+                    >
+                      <option value="">Select dealership</option>
+                      {availableDealerships.map((dealership) => {
+                        const did = dealership.id ?? dealership.dealershipId
+                        const dname = dealership.name ?? dealership.dealershipName ?? did
+                        return (
+                          <option key={did} value={did}>
+                            {dname}
+                          </option>
+                        )
+                      })}
+                    </select>
+                  </td>
+                  <td>
+                    <select
+                      className="user-detail-input user-detail-commission-table-select"
+                      value={d.role}
+                      onChange={(e) =>
+                        setFormData((f) => ({
+                          ...f,
+                          dealershipRoles: f.dealershipRoles.map((x, i) =>
+                            i === idx ? { ...x, role: e.target.value } : x
+                          ),
+                        }))
+                      }
+                    >
+                      {DEALERSHIP_ROLE_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+                  <td className="user-detail-commission-td-action">
+                    <button
+                      type="button"
+                      className="user-detail-role-remove"
+                      onClick={() =>
+                        setFormData((f) => ({
+                          ...f,
+                          dealershipRoles: f.dealershipRoles.filter((_, i) => i !== idx),
+                        }))
+                      }
+                      aria-label="Remove dealership"
+                      title="Remove"
+                    >
+                      <span aria-hidden>−</span>
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+      {editing && (
+        <div className="user-detail-commission-add">
+          <button
+            type="button"
+            className="user-detail-role-add-btn"
+            onClick={() => {
+              setFormData((f) => ({
+                ...f,
+                dealershipRoles: [
+                  ...f.dealershipRoles,
+                  { dealershipId: '', dealershipName: '', role: 'BUYER' },
+                ],
+              }))
+            }}
+            aria-label="Add dealership"
+            title="Add dealership"
+            disabled={availableDealerships.length === 0}
+          >
+            <span aria-hidden>+</span>
+          </button>
+          <span className="user-detail-commission-add-label">Add dealership</span>
+        </div>
+      )}
+    </div>
   )
 
   const commissionRulesData = editing ? form.commissionRules : (user.userCommissionRules ?? user.commissionRules ?? [])
@@ -509,14 +738,20 @@ export default function UserDetail() {
                 {submitError}
               </div>
             )}
-            {commissionTable}
+            <div className="user-detail-tables-row">
+              {dealershipsTable}
+              {commissionTable}
+            </div>
           </section>
         </form>
       ) : (
         <>
           {userHeader}
           <section className="user-detail-section">
-            {commissionTable}
+            <div className="user-detail-tables-row">
+              {dealershipsTable}
+              {commissionTable}
+            </div>
           </section>
         </>
       )}

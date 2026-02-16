@@ -129,6 +129,25 @@
   border-top: 1px solid var(--border);
 }
 
+.user-detail-tables-row {
+  display: flex;
+  gap: 24px;
+}
+
+.user-detail-tables-row > * {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-detail-link {
+  color: var(--header-blue);
+  text-decoration: none;
+}
+
+.user-detail-link:hover {
+  text-decoration: underline;
+}
+
 .user-detail-submit-error {
   margin-bottom: 16px;
   padding: 10px 12px;
@@ -328,9 +347,9 @@
   color: var(--text-muted);
 }
 
-/* Commission Rules (body only) */
+/* Commission Rules & Dealerships cards (same styling) */
 .user-detail-commission-card {
-  padding: 24px;
+  padding: 10px 12px;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -340,8 +359,8 @@
 }
 
 .user-detail-commission-title {
-  margin: 0 0 16px;
-  font-size: 1.125rem;
+  margin: 0 0 8px;
+  font-size: 1.0625rem;
   font-weight: 600;
   color: var(--text);
 }
@@ -353,7 +372,6 @@
 
 .user-detail-commission-table {
   width: 100%;
-  min-width: 600px;
   table-layout: fixed;
   border-collapse: collapse;
   font-size: 0.875rem;
@@ -361,7 +379,7 @@
 
 .user-detail-commission-table th,
 .user-detail-commission-table td {
-  padding: 6px 8px;
+  padding: 4px 6px;
   text-align: left;
   border-bottom: 1px solid var(--border);
   vertical-align: middle;
@@ -401,7 +419,7 @@
   color: var(--text-muted);
   font-style: italic;
   text-align: center;
-  padding: 16px;
+  padding: 10px;
 }
 
 .user-detail-commission-table-select,
@@ -412,7 +430,7 @@
   min-width: 0;
   box-sizing: border-box;
   font-size: 0.8125rem;
-  padding: 4px 6px;
+  padding: 3px 5px;
 }
 
 .user-detail-commission-table-num {
@@ -422,8 +440,8 @@
 .user-detail-commission-add {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 12px;
+  gap: 6px;
+  margin-top: 8px;
 }
 
 .user-detail-commission-add-label {

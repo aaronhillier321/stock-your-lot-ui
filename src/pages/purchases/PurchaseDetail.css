@@ -134,9 +134,9 @@
 
 .purchase-detail-cols {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 32px 48px;
-  max-width: 900px;
+  max-width: 1200px;
 }
 
 .purchase-detail-col {
@@ -155,8 +155,8 @@
 
 .purchase-detail-dl dt {
   margin: 0;
-  font-weight: 600;
-  color: var(--text-muted);
+  font-weight: 700;
+  color: #000;
 }
 
 .purchase-detail-dd {
@@ -236,4 +236,131 @@
 .purchase-detail-error {
   color: var(--error);
   margin-bottom: 16px;
+}
+
+.purchase-detail-commissions-row {
+  display: flex;
+  gap: 32px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.purchase-detail-commissions-row > * {
+  flex: 1;
+  min-width: 0;
+}
+
+.purchase-detail-commissions {
+  min-width: 0;
+}
+
+.purchase-detail-commissions-title {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.purchase-detail-commissions-empty {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+}
+
+.purchase-detail-right-summary {
+  display: flex;
+  gap: 24px;
+  min-width: 0;
+  border-left: 1px solid var(--border);
+  padding-left: 24px;
+}
+
+.purchase-detail-right-summary > * {
+  flex: 1;
+  min-width: 0;
+}
+
+.purchase-detail-invoice,
+.purchase-detail-service-fee {
+  min-width: 0;
+}
+
+.purchase-detail-invoice {
+  border-left: 1px solid var(--border);
+  padding-left: 24px;
+}
+
+.purchase-detail-invoice-title {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.purchase-detail-invoice-dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr);
+  gap: 8px 20px;
+  font-size: 0.9375rem;
+  align-items: start;
+}
+
+.purchase-detail-invoice-dl dt {
+  margin: 0;
+  font-weight: 700;
+  color: #000;
+}
+
+.purchase-detail-invoice-dl dd {
+  margin: 0;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.purchase-detail-invoice-total {
+  font-weight: 700;
+  font-size: 1.0625rem;
+}
+
+.purchase-detail-commissions-table-wrap {
+  overflow: auto;
+  max-height: 280px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.purchase-detail-commissions-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.purchase-detail-commissions-table th,
+.purchase-detail-commissions-table td {
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.purchase-detail-commissions-table thead th {
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--bg-page);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.purchase-detail-commissions-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.purchase-detail-commissions-table tbody tr:hover {
+  background: var(--bg-page);
+}
+
+.purchase-detail-commissions-table td:nth-child(3) {
+  font-variant-numeric: tabular-nums;
 }
