@@ -26,6 +26,11 @@ function toLocalDateStr(dateVal) {
   return ''
 }
 
+function isCommissionRuleExpired(rule) {
+  const status = (rule.status ?? rule.ruleStatus ?? '').toString().toUpperCase()
+  return status === 'EXPIRED'
+}
+
 const ROLE_OPTIONS = ['BUYER', 'DEALER', 'ADMIN']
 
 function toFormData(user) {
@@ -620,7 +625,15 @@ export default function UserDetail() {
     </div>
   )
 
-  const commissionRulesData = editingCommissionRules ? form.commissionRules : (user.userCommissionRules ?? user.commissionRules ?? [])
+  const commissionRulesDataRaw = editingCommissionRules ? form.commissionRules : (user.userCommissionRules ?? user.commissionRules ?? [])
+  const commissionRulesData = editingCommissionRules
+    ? commissionRulesDataRaw
+    : [...commissionRulesDataRaw].sort((a, b) => {
+        const aExp = isCommissionRuleExpired(a)
+        const bExp = isCommissionRuleExpired(b)
+        if (aExp === bExp) return 0
+        return aExp ? 1 : -1
+      })
 
   const commissionTable = (
     <div className="user-detail-commission-card">
@@ -647,32 +660,38 @@ export default function UserDetail() {
           <tr>
             <th>Rule</th>
             <th>Start Date</th>
-            <th>End Date</th>
-            <th>Level</th>
-            <th>Number of Sales</th>
+            <th className="user-detail-col-end-after">End After (Date / Sales)</th>
+            <th className="user-detail-col-level">Level</th>
             {editingCommissionRules && <th className="user-detail-commission-th-action">Remove</th>}
           </tr>
         </thead>
         <tbody>
           {!editingCommissionRules ? (
             commissionRulesData.length > 0 ? (
-              commissionRulesData.map((a, idx) => (
-                <tr key={idx}>
-                  <td>{getRuleName(a.ruleId ?? a.rule_id)}</td>
-                  <td>{toLocalDateStr(a.startDate ?? a.start_date) || '—'}</td>
-                  <td>{toLocalDateStr(a.endDate ?? a.end_date) || '—'}</td>
-                  <td>{a.level != null ? a.level : '—'}</td>
-                  <td>{a.numberOfSales != null ? a.numberOfSales : '—'}</td>
-                </tr>
-              ))
+              commissionRulesData.map((a, idx) => {
+                const expired = isCommissionRuleExpired(a)
+                return (
+                  <tr key={idx} className={expired ? 'user-detail-commission-row-expired' : ''}>
+                    <td>{getRuleName(a.ruleId ?? a.rule_id)}</td>
+                    <td>{toLocalDateStr(a.startDate ?? a.start_date) || '—'}</td>
+                    <td className="user-detail-col-end-after">
+                      <span className="user-detail-end-after-cell">
+                        {toLocalDateStr(a.endDate ?? a.end_date) || '—'} / {((a.numberOfSales ?? a.number_of_sales) != null) ? `${a.numberOfSales ?? a.number_of_sales} sales` : '—'}
+                        {expired && <span className="user-detail-rule-expired-label">Expired</span>}
+                      </span>
+                    </td>
+                    <td className="user-detail-col-level">{a.level != null ? a.level : '—'}</td>
+                  </tr>
+                )
+              })
             ) : (
               <tr>
-                <td colSpan={5} className="user-detail-commission-empty">No commission rules.</td>
+                <td colSpan={4} className="user-detail-commission-empty">No commission rules.</td>
               </tr>
             )
           ) : form?.commissionRules?.length === 0 ? (
             <tr>
-              <td colSpan={6} className="user-detail-commission-empty">No commission rules. Use the + button below to add.</td>
+              <td colSpan={5} className="user-detail-commission-empty">No commission rules. Use the + button below to add.</td>
             </tr>
           ) : (
             (form?.commissionRules ?? []).map((r, idx) => (
@@ -716,23 +735,42 @@ export default function UserDetail() {
                     aria-label="Start date"
                   />
                 </td>
-                <td>
-                  <input
-                    type="date"
-                    className="user-detail-input user-detail-commission-table-input"
-                    value={r.endDate}
-                    onChange={(e) =>
-                      setFormData((f) => ({
-                        ...f,
-                        commissionRules: f.commissionRules.map((x, i) =>
-                          i === idx ? { ...x, endDate: e.target.value } : x
-                        ),
-                      }))
-                    }
-                    aria-label="End date"
-                  />
+                <td className="user-detail-td-end-after user-detail-col-end-after">
+                  <div className="user-detail-end-after-inputs">
+                    <input
+                      type="date"
+                      className="user-detail-input user-detail-commission-table-input"
+                      value={r.endDate}
+                      onChange={(e) =>
+                        setFormData((f) => ({
+                          ...f,
+                          commissionRules: f.commissionRules.map((x, i) =>
+                            i === idx ? { ...x, endDate: e.target.value } : x
+                          ),
+                        }))
+                      }
+                      aria-label="End date"
+                    />
+                    <input
+                      type="number"
+                      className="user-detail-input user-detail-commission-table-num"
+                      min={0}
+                      value={r.numberOfSales == null || r.numberOfSales === '' ? '' : r.numberOfSales}
+                      onChange={(e) =>
+                        setFormData((f) => ({
+                          ...f,
+                          commissionRules: f.commissionRules.map((x, i) =>
+                            i === idx
+                              ? { ...x, numberOfSales: e.target.value === '' ? null : Number(e.target.value) }
+                              : x
+                          ),
+                        }))
+                      }
+                      aria-label="End after (sales)"
+                    />
+                  </div>
                 </td>
-                <td>
+                <td className="user-detail-col-level">
                   <input
                     type="number"
                     className="user-detail-input user-detail-commission-table-num"
@@ -747,25 +785,6 @@ export default function UserDetail() {
                       }))
                     }
                     aria-label="Level"
-                  />
-                </td>
-                <td>
-                  <input
-                    type="number"
-                    className="user-detail-input user-detail-commission-table-num"
-                    min={0}
-                    value={r.numberOfSales == null || r.numberOfSales === '' ? '' : r.numberOfSales}
-                    onChange={(e) =>
-                      setFormData((f) => ({
-                        ...f,
-                        commissionRules: f.commissionRules.map((x, i) =>
-                          i === idx
-                            ? { ...x, numberOfSales: e.target.value === '' ? null : Number(e.target.value) }
-                            : x
-                        ),
-                      }))
-                    }
-                    aria-label="Number of sales"
                   />
                 </td>
                 <td className="user-detail-commission-td-action">
@@ -827,42 +846,65 @@ export default function UserDetail() {
     const d = p.date ?? p.purchaseDate ?? ''
     return String(d).slice(0, 7) === selectedYearMonth
   })
-  const selectedMonthTotalPremiums = purchasesThisMonthList.reduce(
-    (sum, p) => sum + (p.serviceFee != null ? Number(p.serviceFee) : p.service_fee != null ? Number(p.service_fee) : 0),
+
+  function getPurchaseCommissionsList(p) {
+    return p.commissions ?? p.purchaseCommissions ?? p.commission_list ?? []
+  }
+
+  function getPurchaseCommissionTotal(p) {
+    const list = getPurchaseCommissionsList(p)
+    if (Array.isArray(list) && list.length > 0) {
+      return list.reduce(
+        (sum, c) => sum + (typeof c === 'number' ? c : Number(c?.amount ?? c?.value ?? 0) || 0),
+        0
+      )
+    }
+    return Number(p.commission ?? p.commissionAmount ?? p.serviceFee ?? p.service_fee) || 0
+  }
+
+  const selectedMonthTotalCommissions = purchasesThisMonthList.reduce(
+    (sum, p) => sum + getPurchaseCommissionTotal(p),
     0
   )
-  const premiumBreakdown = (() => {
+  const commissionBreakdown = (() => {
     const byAmount = {}
     for (const p of purchasesThisMonthList) {
-      const fee = p.serviceFee != null ? Number(p.serviceFee) : p.service_fee != null ? Number(p.service_fee) : 0
-      if (fee > 0) {
-        byAmount[fee] = (byAmount[fee] || 0) + 1
+      const list = getPurchaseCommissionsList(p)
+      const total = getPurchaseCommissionTotal(p)
+      if (Array.isArray(list) && list.length > 0) {
+        for (const c of list) {
+          const amt = typeof c === 'number' ? c : Number(c?.amount ?? c?.value ?? 0) || 0
+          byAmount[amt] = (byAmount[amt] || 0) + 1
+        }
+      } else {
+        byAmount[total] = (byAmount[total] || 0) + 1
       }
     }
     const entries = Object.entries(byAmount).sort((a, b) => Number(b[0]) - Number(a[0]))
-    return entries.length === 0 ? '—' : entries.map(([amt, count]) => `(${formatMoney(amt)} × ${count})`).join(' ')
+    return entries.length === 0 ? '—' : entries.map(([amt, count]) => `(${formatMoney(Number(amt))} × ${count})`).join('\n')
   })()
 
   const monthPurchasesTable = (
     <div className="user-detail-commission-card">
       <h3 className="user-detail-commission-title">Purchases</h3>
       <div className="user-detail-summary-table-wrap">
-        <table className="user-detail-commission-table">
+        <table className="user-detail-commission-table user-detail-purchases-table">
           <thead>
             <tr>
               <th>VIN</th>
-              <th>Commission</th>
               <th>Dealership</th>
+              <th>Date</th>
+              <th>Commission</th>
             </tr>
           </thead>
           <tbody>
             {purchasesLoading ? (
               <tr>
-                <td colSpan={3} className="user-detail-commission-empty">Loading…</td>
+                <td colSpan={4} className="user-detail-commission-empty">Loading…</td>
               </tr>
             ) : purchasesThisMonthList.length === 0 ? (
               <tr>
-                <td colSpan={3} className="user-detail-commission-empty">No purchases for selected month.</td>
+                <td colSpan={4} className="user-detail-commission-empty">No purchases for selected month.</td>
               </tr>
             ) : (
               purchasesThisMonthList.map((p) => (
@@ -872,7 +914,6 @@ export default function UserDetail() {
                       {p.vin ?? '—'}
                     </Link>
                   </td>
-                  <td>{formatMoney(p.serviceFee ?? p.service_fee)}</td>
                   <td>
                     {(p.dealershipId ?? p.dealership_id) ? (
                       <Link to={`/dealerships/${p.dealershipId ?? p.dealership_id}`} className="user-detail-link">
@@ -882,6 +923,8 @@ export default function UserDetail() {
                       p.dealershipName ?? p.dealership_name ?? '—'
                     )}
                   </td>
+                  <td>{toLocalDateStr(p.date ?? p.purchaseDate ?? p.purchase_date) || '—'}</td>
+                  <td>{formatMoney(getPurchaseCommissionTotal(p))}</td>
                 </tr>
               ))
             )}
@@ -932,10 +975,10 @@ export default function UserDetail() {
             <dl className="user-detail-summary-dl">
               <dt>Number of purchases</dt>
               <dd>{purchasesThisMonthList.length}</dd>
-              <dt>Premiums</dt>
-              <dd>{premiumBreakdown}</dd>
+              <dt>Commissions</dt>
+              <dd className="user-detail-summary-breakdown">{commissionBreakdown}</dd>
               <dt>Total invoice</dt>
-              <dd className="user-detail-summary-total">{formatMoney(selectedMonthTotalPremiums)}</dd>
+              <dd className="user-detail-summary-total">{formatMoney(selectedMonthTotalCommissions)}</dd>
             </dl>
           )}
         </div>

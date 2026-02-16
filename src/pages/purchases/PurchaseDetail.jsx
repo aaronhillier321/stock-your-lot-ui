@@ -250,12 +250,8 @@ export default function PurchaseDetail() {
   const commissions = purchase.commissions ?? []
   const purchasePriceNum = purchase.purchasePrice != null ? Number(purchase.purchasePrice) : null
   const serviceFeeNum = purchase.serviceFee != null ? Number(purchase.serviceFee) : null
-  const totalInvoiceNum =
-    purchasePriceNum != null && serviceFeeNum != null
-      ? purchasePriceNum + serviceFeeNum
-      : purchasePriceNum != null
-        ? purchasePriceNum
-        : null
+  const transportFeeNum = purchase.transportFee != null ? Number(purchase.transportFee) : (purchase.transport_fee != null ? Number(purchase.transport_fee) : null)
+  const invoiceTotalNum = (serviceFeeNum ?? 0) + (transportFeeNum ?? 0)
   const formatMoney = (n) =>
     n != null ? `$${n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—'
 
@@ -309,12 +305,12 @@ export default function PurchaseDetail() {
     <div className="purchase-detail-invoice">
       <h3 className="purchase-detail-invoice-title">Invoice</h3>
       <dl className="purchase-detail-invoice-dl">
-        <dt>Purchase Price</dt>
-        <dd>{formatMoney(purchasePriceNum)}</dd>
         <dt>Service Fee</dt>
         <dd>{formatMoney(serviceFeeNum)}</dd>
-        <dt>Total Invoice</dt>
-        <dd className="purchase-detail-invoice-total">{formatMoney(totalInvoiceNum)}</dd>
+        <dt>Transport Fee</dt>
+        <dd>{formatMoney(transportFeeNum)}</dd>
+        <dt>Invoice</dt>
+        <dd className="purchase-detail-invoice-total">{formatMoney(invoiceTotalNum)}</dd>
       </dl>
     </div>
   )

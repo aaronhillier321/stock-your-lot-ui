@@ -209,7 +209,11 @@ export default function DealershipDetail() {
 
   function getRuleName(ruleId) {
     const r = premiumRules.find((x) => x.id === ruleId)
-    return r ? (r.ruleName ?? r.rule_name ?? r.id) : ruleId ?? '—'
+    if (!r) return ruleId ?? '—'
+    const name = r.ruleName ?? r.rule_name ?? r.id
+    const amount = r.amount != null ? r.amount : '—'
+    const type = r.premiumType ?? r.premium_type ?? '—'
+    return `${name} (${amount} ${type})`
   }
 
   function getRoleAtDealership(user) {
@@ -775,18 +779,19 @@ export default function DealershipDetail() {
           <thead>
             <tr>
               <th>VIN</th>
-              <th>Service Fee (Premium)</th>
               <th>Buyer</th>
+              <th>Date</th>
+              <th>Service Fee</th>
             </tr>
           </thead>
           <tbody>
             {purchasesLoading ? (
               <tr>
-                <td colSpan={3} className="dealership-detail-empty-cell">Loading…</td>
+                <td colSpan={4} className="dealership-detail-empty-cell">Loading…</td>
               </tr>
             ) : purchasesThisMonthList.length === 0 ? (
               <tr>
-                <td colSpan={3} className="dealership-detail-empty-cell">No purchases for selected month.</td>
+                <td colSpan={4} className="dealership-detail-empty-cell">No purchases for selected month.</td>
               </tr>
             ) : (
               purchasesThisMonthList.map((p) => (
@@ -796,8 +801,9 @@ export default function DealershipDetail() {
                       {p.vin ?? '—'}
                     </Link>
                   </td>
-                  <td>{formatMoney(p.serviceFee ?? p.service_fee)}</td>
                   <td>{p.buyerUsername ?? p.buyer_username ?? p.buyerEmail ?? p.buyer_email ?? '—'}</td>
+                  <td>{toLocalDateStr(p.date ?? p.purchaseDate ?? p.purchase_date) || '—'}</td>
+                  <td>{formatMoney(p.serviceFee ?? p.service_fee)}</td>
                 </tr>
               ))
             )}
