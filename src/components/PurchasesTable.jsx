@@ -132,6 +132,13 @@ function buildColumns(showBuyerColumn, onPdfClick, loadingFileId) {
       minSize: 200,
     })
   }
+  cols.push({
+    id: 'status',
+    accessorFn: (row) => (row.status ?? row.purchaseStatus ?? '—').toString(),
+    header: 'Status',
+    size: 120,
+    minSize: 100,
+  })
   return cols
 }
 

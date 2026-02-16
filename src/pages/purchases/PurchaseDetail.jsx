@@ -236,12 +236,22 @@ export default function PurchaseDetail() {
               <input type="number" step="any" className="purchase-detail-input" value={form.transportQuote} onChange={(e) => setFormData((f) => ({ ...f, transportQuote: e.target.value }))} min={0} />
             )}
           </dd>
-          {(purchase.buyerEmail ?? purchase.buyer?.email) && (
+          {(purchase.buyerId ?? purchase.buyer_id ?? purchase.buyerUsername ?? purchase.buyer_username ?? purchase.buyerEmail ?? purchase.buyer?.email) && (
             <>
               <dt>Buyer</dt>
-              <dd className="purchase-detail-dd">{purchase.buyerEmail ?? purchase.buyer?.email}</dd>
+              <dd className="purchase-detail-dd">
+                {(purchase.buyerId ?? purchase.buyer_id ?? purchase.buyer?.id) ? (
+                  <Link to={`/users/${purchase.buyerId ?? purchase.buyer_id ?? purchase.buyer?.id}`} className="purchase-detail-link">
+                    {purchase.buyerUsername ?? purchase.buyer_username ?? purchase.buyer?.username ?? purchase.buyerEmail ?? purchase.buyer?.email ?? '—'}
+                  </Link>
+                ) : (
+                  purchase.buyerUsername ?? purchase.buyer_username ?? purchase.buyer?.username ?? purchase.buyerEmail ?? purchase.buyer?.email ?? '—'
+                )}
+              </dd>
             </>
           )}
+          <dt>Status</dt>
+          <dd className="purchase-detail-dd">{purchase.status ?? purchase.purchaseStatus ?? '—'}</dd>
         </dl>
       </div>
     </div>

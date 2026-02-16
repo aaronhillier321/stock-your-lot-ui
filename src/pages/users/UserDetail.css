@@ -1,12 +1,15 @@
 .user-detail-page {
   width: 100%;
+  max-width: 100%;
   flex: 1;
   min-height: 0;
+  min-width: 0;
   padding: 5px;
   display: flex;
   flex-direction: column;
   max-width: 1400px;
   margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .user-detail-top-bar {
@@ -46,11 +49,30 @@
   margin-bottom: 16px;
 }
 
+.user-detail-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.user-detail-header-row .user-detail-title {
+  margin: 0;
+}
+
 .user-detail-title {
   margin: 0 0 12px;
   font-size: 1.75rem;
   font-weight: 700;
   color: var(--text);
+}
+
+.user-detail-header-edit-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 8px;
 }
 
 .user-detail-info-line {
@@ -124,11 +146,13 @@
 .user-detail-section {
   flex: 1;
   min-height: 0;
+  min-width: 0;
   overflow-y: auto;
   margin-top: 16px;
   padding-top: 20px;
   padding-right: 20px;
   border-top: 1px solid var(--border);
+  box-sizing: border-box;
 }
 
 .user-detail-tables-row {
@@ -138,15 +162,23 @@
   min-height: 200px;
   max-height: 25vh;
   flex-shrink: 0;
+  min-width: 0;
 }
 
 .user-detail-tables-row > * {
-  flex: 1;
   min-width: 0;
   min-height: 0;
   height: 100%;
   display: flex;
   flex-direction: column;
+}
+
+.user-detail-tables-row > *:nth-child(1) {
+  flex: 0 0 35%;
+}
+
+.user-detail-tables-row > *:nth-child(2) {
+  flex: 0 0 65%;
 }
 
 .user-detail-link {
@@ -372,8 +404,18 @@
 }
 
 .user-detail-tables-row .user-detail-commission-card {
-  flex: 1;
   min-height: 0;
+  min-width: 0;
+}
+
+.user-detail-tables-row .user-detail-commission-card:nth-child(1) {
+  flex: 1 1 35%;
+  min-width: 0;
+}
+
+.user-detail-tables-row .user-detail-commission-card:nth-child(2) {
+  flex: 1 1 65%;
+  min-width: 0;
 }
 
 .user-detail-card-header-row {
@@ -412,6 +454,289 @@
 
 .user-detail-table-edit-btn:hover {
   background: rgba(0, 0, 0, 0.04);
+}
+
+.user-detail-dealerships-add-btn,
+.user-detail-commission-rules-add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Commission rules table: uniform column widths, End After wider, actions last */
+.user-detail-commission-rules-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.user-detail-commission-rules-table th:nth-child(1),
+.user-detail-commission-rules-table td:nth-child(1) { width: 35%; }
+.user-detail-commission-rules-table th:nth-child(2),
+.user-detail-commission-rules-table td:nth-child(2) { width: 14%; }
+.user-detail-commission-rules-table th:nth-child(3),
+.user-detail-commission-rules-table td:nth-child(3) { width: 28%; }
+.user-detail-commission-rules-table th:nth-child(4),
+.user-detail-commission-rules-table td:nth-child(4) { width: 8%; }
+.user-detail-commission-rules-table th:nth-child(5),
+.user-detail-commission-rules-table td:nth-child(5) {
+  width: 8%;
+  min-width: 70px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.user-detail-commission-rules-table .user-detail-col-level {
+  width: 8%;
+  min-width: 4.5em;
+  max-width: none;
+}
+
+.user-detail-commission-rules-actions-cell {
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  box-sizing: border-box;
+}
+
+/* Add dealership modal */
+.user-detail-dealerships-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.user-detail-dealerships-modal {
+  width: 100%;
+  max-width: 440px;
+  padding: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+}
+
+.user-detail-dealerships-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.user-detail-dealerships-modal-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.user-detail-dealerships-modal-close {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s;
+}
+
+.user-detail-dealerships-modal-close:hover {
+  color: var(--text);
+  background: #f0f2f5;
+}
+
+.user-detail-dealerships-modal-form {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.user-detail-dealerships-modal-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.user-detail-dealerships-modal-label-text {
+  white-space: nowrap;
+}
+
+.user-detail-dealerships-modal-input {
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--text);
+  background: var(--bg-page);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.user-detail-dealerships-modal-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+.user-detail-dealerships-modal-select {
+  cursor: pointer;
+}
+
+.user-detail-dealerships-modal-error {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--error);
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+}
+
+.user-detail-dealerships-modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.user-detail-dealerships-modal-cancel {
+  padding: 10px 18px;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: var(--bg-page);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.user-detail-dealerships-modal-cancel:hover:not(:disabled) {
+  border-color: var(--text-muted);
+  color: var(--text);
+}
+
+.user-detail-dealerships-modal-submit {
+  padding: 10px 18px;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: white;
+  background: var(--header-blue);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.user-detail-dealerships-modal-submit:hover:not(:disabled) {
+  background: var(--header-blue-hover);
+}
+
+.user-detail-dealerships-modal-cancel:disabled,
+.user-detail-dealerships-modal-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Dealerships table: full width, equal columns, equal row height */
+.user-detail-dealerships-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.user-detail-dealerships-table th:nth-child(1),
+.user-detail-dealerships-table td:nth-child(1) {width: 50%;}
+.user-detail-dealerships-table th:nth-child(2),
+.user-detail-dealerships-table td:nth-child(2),
+.user-detail-dealerships-table th:nth-child(3),
+.user-detail-dealerships-table td:nth-child(3) {
+  width: 20%;
+  box-sizing: border-box;
+}
+
+.user-detail-dealerships-table th:nth-child(3),
+.user-detail-dealerships-table td:nth-child(3) {
+  text-align: center;
+}
+
+.user-detail-dealerships-table tbody td,
+.user-detail-dealerships-table thead th {
+  vertical-align: middle;
+  padding: 2px 12px;
+}
+
+.user-detail-dealerships-actions-cell {
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  box-sizing: border-box;
+}
+
+.user-detail-dealerships-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  background: transparent;
+  color: var(--text-muted);
+  transition: color 0.15s, background 0.15s;
+}
+
+.user-detail-dealerships-icon-btn:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--text);
+}
+
+.user-detail-dealerships-icon-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.user-detail-dealerships-icon-btn-edit {
+  color: var(--header-blue);
+}
+
+.user-detail-dealerships-icon-btn-edit:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--header-blue);
+}
+
+.user-detail-dealerships-icon-btn-delete {
+  color: #dc2626;
+}
+
+.user-detail-dealerships-icon-btn-delete:hover:not(:disabled) {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.user-detail-dealerships-icon-btn-save {
+  color: #16a34a;
+}
+
+.user-detail-dealerships-icon-btn-save:hover:not(:disabled) {
+  background: rgba(22, 163, 74, 0.1);
+  color: #16a34a;
+}
+
+.user-detail-dealerships-icon-btn-cancel:hover:not(:disabled) {
+  color: var(--text);
 }
 
 .user-detail-table-edit-actions {
@@ -462,6 +787,7 @@
 .user-detail-commission-table-wrap {
   flex: 1;
   min-height: 0;
+  min-width: 0;
   height: 0;
   overflow: auto;
   width: 100%;
@@ -490,13 +816,21 @@
 }
 
 .user-detail-commission-table th:nth-child(1),
-.user-detail-commission-table td:nth-child(1) { width: 22%; }
+.user-detail-commission-table td:nth-child(1),
 .user-detail-commission-table th:nth-child(2),
-.user-detail-commission-table td:nth-child(2) { width: 18%; min-width: 20em; white-space: nowrap; }
+.user-detail-commission-table td:nth-child(2),
 .user-detail-col-end-after,
 .user-detail-td-end-after {
   min-width: 15em;
   box-sizing: border-box;
+}
+
+/* Allow user tables to shrink so page doesn't scroll horizontally */
+.user-detail-commission-rules-table th,
+.user-detail-commission-rules-table td,
+.user-detail-dealerships-table th,
+.user-detail-dealerships-table td {
+  min-width: 0;
 }
 
 .user-detail-col-level {
@@ -520,8 +854,10 @@
 .user-detail-purchases-table th:nth-child(3),
 .user-detail-purchases-table td:nth-child(3),
 .user-detail-purchases-table th:nth-child(4),
-.user-detail-purchases-table td:nth-child(4) {
-  width: 25%;
+.user-detail-purchases-table td:nth-child(4),
+.user-detail-purchases-table th:nth-child(5),
+.user-detail-purchases-table td:nth-child(5) {
+  width: 20%;
   min-width: 0;
 }
 

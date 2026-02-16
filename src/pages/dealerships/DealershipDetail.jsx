@@ -782,16 +782,17 @@ export default function DealershipDetail() {
               <th>Buyer</th>
               <th>Date</th>
               <th>Service Fee</th>
+              <th>Status</th>
             </tr>
           </thead>
           <tbody>
             {purchasesLoading ? (
               <tr>
-                <td colSpan={4} className="dealership-detail-empty-cell">Loading…</td>
+                <td colSpan={5} className="dealership-detail-empty-cell">Loading…</td>
               </tr>
             ) : purchasesThisMonthList.length === 0 ? (
               <tr>
-                <td colSpan={4} className="dealership-detail-empty-cell">No purchases for selected month.</td>
+                <td colSpan={5} className="dealership-detail-empty-cell">No purchases for selected month.</td>
               </tr>
             ) : (
               purchasesThisMonthList.map((p) => (
@@ -804,6 +805,7 @@ export default function DealershipDetail() {
                   <td>{p.buyerUsername ?? p.buyer_username ?? p.buyerEmail ?? p.buyer_email ?? '—'}</td>
                   <td>{toLocalDateStr(p.date ?? p.purchaseDate ?? p.purchase_date) || '—'}</td>
                   <td>{formatMoney(p.serviceFee ?? p.service_fee)}</td>
+                  <td>{p.status ?? p.purchaseStatus ?? '—'}</td>
                 </tr>
               ))
             )}
