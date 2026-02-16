@@ -1,7 +1,18 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useParams, Link, Navigate } from 'react-router-dom'
 import { getApiBase, authFetch, getStoredToken } from '../../api'
 import './UserDetail.css'
+
+const MONTHS = [
+  { value: 1, label: 'January' }, { value: 2, label: 'February' }, { value: 3, label: 'March' },
+  { value: 4, label: 'April' }, { value: 5, label: 'May' }, { value: 6, label: 'June' },
+  { value: 7, label: 'July' }, { value: 8, label: 'August' }, { value: 9, label: 'September' },
+  { value: 10, label: 'October' }, { value: 11, label: 'November' }, { value: 12, label: 'December' },
+]
+const now = new Date()
+const currentYear = now.getFullYear()
+const currentMonth = now.getMonth() + 1
+const YEARS = [currentYear, currentYear - 1, currentYear - 2]
 
 function formatRoles(roles) {
   if (roles == null || roles === '') return '—'
@@ -84,12 +95,18 @@ export default function UserDetail() {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [editing, setEditing] = useState(false)
+  const [editingCommissionRules, setEditingCommissionRules] = useState(false)
+  const [editingDealerships, setEditingDealerships] = useState(false)
   const [formData, setFormData] = useState(null)
   const [submitError, setSubmitError] = useState('')
-  const [submitting, setSubmitting] = useState(false)
+  const [submittingRules, setSubmittingRules] = useState(false)
+  const [submittingDealerships, setSubmittingDealerships] = useState(false)
   const [availableRules, setAvailableRules] = useState([])
   const [availableDealerships, setAvailableDealerships] = useState([])
+  const [purchases, setPurchases] = useState([])
+  const [purchasesLoading, setPurchasesLoading] = useState(false)
+  const [summaryMonth, setSummaryMonth] = useState(currentMonth)
+  const [summaryYear, setSummaryYear] = useState(currentYear)
 
   useEffect(() => {
     if (!token) return
@@ -108,7 +125,7 @@ export default function UserDetail() {
   }, [token])
 
   useEffect(() => {
-    if (!editing || !token) return
+    if (!editingDealerships || !token) return
     let cancelled = false
     async function fetchDealerships() {
       try {
@@ -121,7 +138,37 @@ export default function UserDetail() {
     }
     fetchDealerships()
     return () => { cancelled = true }
-  }, [editing, token])
+  }, [editingDealerships, token])
+
+  useEffect(() => {
+    if (!id || !token) return
+    let cancelled = false
+    setPurchasesLoading(true)
+    async function fetchPurchases() {
+      try {
+        const res = await authFetch(`${getApiBase()}/api/purchases/buyer/${id}`)
+        if (res.ok && !cancelled) {
+          const data = await res.json()
+          setPurchases(Array.isArray(data) ? data : [])
+        }
+      } catch (_) {}
+      if (!cancelled) setPurchasesLoading(false)
+    }
+    fetchPurchases()
+    return () => { cancelled = true }
+  }, [id, token])
+
+  const monthsForYear = useMemo(() => {
+    const y = summaryYear || currentYear
+    if (y === currentYear) return MONTHS.filter((m) => m.value <= currentMonth)
+    return MONTHS
+  }, [summaryYear])
+
+  useEffect(() => {
+    if (summaryYear === currentYear && summaryMonth > currentMonth) {
+      setSummaryMonth(currentMonth)
+    }
+  }, [summaryYear, summaryMonth])
 
   useEffect(() => {
     let cancelled = false
@@ -161,22 +208,27 @@ export default function UserDetail() {
     return r ? (r.ruleName ?? r.rule_name ?? r.id) : ruleId ?? '—'
   }
 
-  function startEditing() {
-    setEditing(true)
-    setFormData(toFormData(user))
+  function startEditingCommissionRules() {
+    setFormData((prev) => prev ?? toFormData(user))
+    setEditingCommissionRules(true)
     setSubmitError('')
   }
 
-  function cancelEditing() {
-    setEditing(false)
-    setFormData(null)
+  function cancelEditingCommissionRules() {
+    setEditingCommissionRules(false)
+    setFormData((prev) => {
+      if (!prev || !editingDealerships) return null
+      const fresh = toFormData(user)
+      return { ...prev, commissionRules: fresh.commissionRules }
+    })
     setSubmitError('')
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault()
+  async function handleSaveCommissionRules(e) {
+    e?.preventDefault?.()
+    if (!formData) return
     setSubmitError('')
-    setSubmitting(true)
+    setSubmittingRules(true)
     try {
       const body = toUpdateBody(formData)
       const res = await authFetch(`${getApiBase()}/api/users/${id}`, {
@@ -187,12 +239,43 @@ export default function UserDetail() {
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
         setSubmitError(data.message || data.error || `Update failed (${res.status})`)
+        setSubmittingRules(false)
         return
       }
       const data = await res.json()
-      const updatedUser = data?.data ?? data
-      const userEmail = updatedUser.email ?? user.email
+      setUser(data?.data ?? data)
+      setEditingCommissionRules(false)
+      setFormData((prev) => (editingDealerships && prev ? { ...prev, commissionRules: (data?.data ?? data)?.userCommissionRules ?? (data?.data ?? data)?.commissionRules ?? prev.commissionRules } : null))
+    } catch (err) {
+      setSubmitError(err.message || 'Failed to update commission rules')
+    } finally {
+      setSubmittingRules(false)
+    }
+  }
 
+  function startEditingDealerships() {
+    setFormData((prev) => prev ?? toFormData(user))
+    setEditingDealerships(true)
+    setSubmitError('')
+  }
+
+  function cancelEditingDealerships() {
+    setEditingDealerships(false)
+    setFormData((prev) => {
+      if (!prev || !editingCommissionRules) return null
+      const fresh = toFormData(user)
+      return { ...prev, dealershipRoles: fresh.dealershipRoles }
+    })
+    setSubmitError('')
+  }
+
+  async function handleSaveDealerships(e) {
+    e?.preventDefault?.()
+    if (!formData) return
+    setSubmitError('')
+    setSubmittingDealerships(true)
+    try {
+      const userEmail = (formData.email ?? user.email ?? '').toString().trim()
       const initialDealershipIds = new Set(
         (user.dealershipRoles ?? user.dealership_roles ?? []).map((d) => d.dealershipId ?? d.dealership_id).filter(Boolean)
       )
@@ -201,13 +284,11 @@ export default function UserDetail() {
       )
       for (const dealershipId of initialDealershipIds) {
         if (!formDealershipIds.has(dealershipId)) {
-          const delRes = await authFetch(`${getApiBase()}/api/users/${id}/dealerships/${dealershipId}`, {
-            method: 'DELETE',
-          })
+          const delRes = await authFetch(`${getApiBase()}/api/users/${id}/dealerships/${dealershipId}`, { method: 'DELETE' })
           if (!delRes.ok && delRes.status !== 404) {
             const errData = await delRes.json().catch(() => ({}))
             setSubmitError(errData.message || errData.error || `Failed to remove from dealership (${delRes.status})`)
-            setSubmitting(false)
+            setSubmittingDealerships(false)
             return
           }
         }
@@ -218,33 +299,28 @@ export default function UserDetail() {
         const addRes = await authFetch(`${getApiBase()}/api/users/dealerships`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            email: userEmail,
-            dealershipId: d.dealershipId,
-            role: apiRole,
-          }),
+          body: JSON.stringify({ email: userEmail, dealershipId: d.dealershipId, role: apiRole }),
         })
         if (!addRes.ok) {
           const errData = await addRes.json().catch(() => ({}))
           setSubmitError(errData.message || errData.error || `Failed to add/update dealership (${addRes.status})`)
-          setSubmitting(false)
+          setSubmittingDealerships(false)
           return
         }
       }
-
+      let updatedUser = user
       const refetchRes = await authFetch(`${getApiBase()}/api/users/${id}`)
       if (refetchRes.ok) {
         const refetchData = await refetchRes.json()
-        setUser(refetchData?.data ?? refetchData)
-      } else {
+        updatedUser = refetchData?.data ?? refetchData
         setUser(updatedUser)
       }
-      setEditing(false)
-      setFormData(null)
+      setEditingDealerships(false)
+      setFormData((prev) => (editingCommissionRules && prev ? { ...prev, dealershipRoles: toFormData(updatedUser).dealershipRoles } : null))
     } catch (err) {
-      setSubmitError(err.message || 'Failed to update user')
+      setSubmitError(err.message || 'Failed to update dealerships')
     } finally {
-      setSubmitting(false)
+      setSubmittingDealerships(false)
     }
   }
 
@@ -267,6 +343,7 @@ export default function UserDetail() {
   const email = (user.email ?? user.userName ?? '').toString().trim() || '—'
   const form = formData
 
+  const editing = editingCommissionRules || editingDealerships
   const infoLine = !editing
     ? [email, user.phone ?? user.phoneNumber, formatRoles(user.roles ?? user.role ?? user.userRole)].filter(Boolean).join(' · ') || '—'
     : null
@@ -377,22 +454,38 @@ export default function UserDetail() {
     { value: 'ADMIN', label: 'ADMIN' },
   ]
 
-  const dealershipRolesData = editing ? form.dealershipRoles : (user.dealershipRoles ?? user.dealership_roles ?? [])
+  const dealershipRolesData = editingDealerships ? form.dealershipRoles : (user.dealershipRoles ?? user.dealership_roles ?? [])
 
   const dealershipsTable = (
     <div className="user-detail-commission-card">
-      <h3 className="user-detail-commission-title">Dealerships</h3>
+      <div className="user-detail-card-header-row">
+        <h3 className="user-detail-commission-title">Dealerships</h3>
+        {!editingDealerships ? (
+          <button type="button" className="user-detail-table-edit-btn" onClick={startEditingDealerships}>
+            Edit
+          </button>
+        ) : (
+          <div className="user-detail-table-edit-actions">
+            <button type="button" className="user-detail-table-cancel-btn" onClick={cancelEditingDealerships} disabled={submittingDealerships}>
+              Cancel
+            </button>
+            <button type="button" className="user-detail-table-save-btn" onClick={handleSaveDealerships} disabled={submittingDealerships}>
+              {submittingDealerships ? 'Saving…' : 'Save'}
+            </button>
+          </div>
+        )}
+      </div>
       <div className="user-detail-commission-table-wrap">
         <table className="user-detail-commission-table">
           <thead>
             <tr>
               <th>Dealership</th>
               <th>Role</th>
-              {editing && <th className="user-detail-commission-th-action">Remove</th>}
+              {editingDealerships && <th className="user-detail-commission-th-action">Remove</th>}
             </tr>
           </thead>
           <tbody>
-            {!editing ? (
+            {!editingDealerships ? (
               dealershipRolesData.length > 0 ? (
                 dealershipRolesData.map((d) => {
                   const id = d.dealershipId ?? d.dealership_id
@@ -501,7 +594,7 @@ export default function UserDetail() {
           </tbody>
         </table>
       </div>
-      {editing && (
+      {editingDealerships && (
         <div className="user-detail-commission-add">
           <button
             type="button"
@@ -527,11 +620,27 @@ export default function UserDetail() {
     </div>
   )
 
-  const commissionRulesData = editing ? form.commissionRules : (user.userCommissionRules ?? user.commissionRules ?? [])
+  const commissionRulesData = editingCommissionRules ? form.commissionRules : (user.userCommissionRules ?? user.commissionRules ?? [])
 
   const commissionTable = (
     <div className="user-detail-commission-card">
-      <h3 className="user-detail-commission-title">Commission Rules</h3>
+      <div className="user-detail-card-header-row">
+        <h3 className="user-detail-commission-title">Commission Rules</h3>
+        {!editingCommissionRules ? (
+          <button type="button" className="user-detail-table-edit-btn" onClick={startEditingCommissionRules}>
+            Edit
+          </button>
+        ) : (
+          <div className="user-detail-table-edit-actions">
+            <button type="button" className="user-detail-table-cancel-btn" onClick={cancelEditingCommissionRules} disabled={submittingRules}>
+              Cancel
+            </button>
+            <button type="button" className="user-detail-table-save-btn" onClick={handleSaveCommissionRules} disabled={submittingRules}>
+              {submittingRules ? 'Saving…' : 'Save'}
+            </button>
+          </div>
+        )}
+      </div>
       <div className="user-detail-commission-table-wrap">
       <table className="user-detail-commission-table">
         <thead>
@@ -541,11 +650,11 @@ export default function UserDetail() {
             <th>End Date</th>
             <th>Level</th>
             <th>Number of Sales</th>
-            {editing && <th className="user-detail-commission-th-action">Remove</th>}
+            {editingCommissionRules && <th className="user-detail-commission-th-action">Remove</th>}
           </tr>
         </thead>
         <tbody>
-          {!editing ? (
+          {!editingCommissionRules ? (
             commissionRulesData.length > 0 ? (
               commissionRulesData.map((a, idx) => (
                 <tr key={idx}>
@@ -561,12 +670,12 @@ export default function UserDetail() {
                 <td colSpan={5} className="user-detail-commission-empty">No commission rules.</td>
               </tr>
             )
-          ) : form.commissionRules.length === 0 ? (
+          ) : form?.commissionRules?.length === 0 ? (
             <tr>
               <td colSpan={6} className="user-detail-commission-empty">No commission rules. Use the + button below to add.</td>
             </tr>
           ) : (
-            form.commissionRules.map((r, idx) => (
+            (form?.commissionRules ?? []).map((r, idx) => (
               <tr key={idx}>
                 <td>
                   <select
@@ -681,7 +790,7 @@ export default function UserDetail() {
         </tbody>
       </table>
       </div>
-      {editing && (
+      {editingCommissionRules && (
         <div className="user-detail-commission-add">
           <button
             type="button"
@@ -692,7 +801,7 @@ export default function UserDetail() {
               setFormData((f) => ({
                 ...f,
                 commissionRules: [
-                  ...f.commissionRules,
+                  ...(f.commissionRules ?? []),
                   { ruleId: firstRuleId, startDate: today, endDate: '', level: 1, numberOfSales: null },
                 ],
               }))
@@ -709,52 +818,150 @@ export default function UserDetail() {
     </div>
   )
 
+  const formatMoney = (n) =>
+    n != null ? `$${Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—'
+  const selectedYearMonth = summaryMonth && summaryYear
+    ? `${summaryYear}-${String(summaryMonth).padStart(2, '0')}`
+    : `${currentYear}-${String(currentMonth).padStart(2, '0')}`
+  const purchasesThisMonthList = purchases.filter((p) => {
+    const d = p.date ?? p.purchaseDate ?? ''
+    return String(d).slice(0, 7) === selectedYearMonth
+  })
+  const selectedMonthTotalPremiums = purchasesThisMonthList.reduce(
+    (sum, p) => sum + (p.serviceFee != null ? Number(p.serviceFee) : p.service_fee != null ? Number(p.service_fee) : 0),
+    0
+  )
+  const premiumBreakdown = (() => {
+    const byAmount = {}
+    for (const p of purchasesThisMonthList) {
+      const fee = p.serviceFee != null ? Number(p.serviceFee) : p.service_fee != null ? Number(p.service_fee) : 0
+      if (fee > 0) {
+        byAmount[fee] = (byAmount[fee] || 0) + 1
+      }
+    }
+    const entries = Object.entries(byAmount).sort((a, b) => Number(b[0]) - Number(a[0]))
+    return entries.length === 0 ? '—' : entries.map(([amt, count]) => `(${formatMoney(amt)} × ${count})`).join(' ')
+  })()
+
+  const monthPurchasesTable = (
+    <div className="user-detail-commission-card">
+      <h3 className="user-detail-commission-title">Purchases</h3>
+      <div className="user-detail-summary-table-wrap">
+        <table className="user-detail-commission-table">
+          <thead>
+            <tr>
+              <th>VIN</th>
+              <th>Commission</th>
+              <th>Dealership</th>
+            </tr>
+          </thead>
+          <tbody>
+            {purchasesLoading ? (
+              <tr>
+                <td colSpan={3} className="user-detail-commission-empty">Loading…</td>
+              </tr>
+            ) : purchasesThisMonthList.length === 0 ? (
+              <tr>
+                <td colSpan={3} className="user-detail-commission-empty">No purchases for selected month.</td>
+              </tr>
+            ) : (
+              purchasesThisMonthList.map((p) => (
+                <tr key={p.id}>
+                  <td>
+                    <Link to={`/purchases/${p.id}`} className="user-detail-link">
+                      {p.vin ?? '—'}
+                    </Link>
+                  </td>
+                  <td>{formatMoney(p.serviceFee ?? p.service_fee)}</td>
+                  <td>
+                    {(p.dealershipId ?? p.dealership_id) ? (
+                      <Link to={`/dealerships/${p.dealershipId ?? p.dealership_id}`} className="user-detail-link">
+                        {p.dealershipName ?? p.dealership_name ?? '—'}
+                      </Link>
+                    ) : (
+                      p.dealershipName ?? p.dealership_name ?? '—'
+                    )}
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+
+  const summaryBlock = (
+    <div className="user-detail-summary">
+      <div className="user-detail-summary-filters">
+        <label className="user-detail-filter-label">
+          Month
+          <select
+            className="user-detail-filter-select"
+            value={summaryMonth ?? ''}
+            onChange={(e) => setSummaryMonth(e.target.value ? Number(e.target.value) : currentMonth)}
+          >
+            <option value="">Select month</option>
+            {monthsForYear.map((m) => (
+              <option key={m.value} value={m.value}>{m.label}</option>
+            ))}
+          </select>
+        </label>
+        <label className="user-detail-filter-label">
+          Year
+          <select
+            className="user-detail-filter-select"
+            value={summaryYear ?? ''}
+            onChange={(e) => setSummaryYear(e.target.value ? Number(e.target.value) : currentYear)}
+          >
+            <option value="">Select year</option>
+            {YEARS.map((y) => (
+              <option key={y} value={y}>{y}</option>
+            ))}
+          </select>
+        </label>
+      </div>
+      <div className="user-detail-summary-row">
+        <div className="user-detail-summary-left">
+          {monthPurchasesTable}
+        </div>
+        <div className="user-detail-summary-right">
+          {purchasesLoading ? (
+            <p className="user-detail-loading">Loading…</p>
+          ) : (
+            <dl className="user-detail-summary-dl">
+              <dt>Number of purchases</dt>
+              <dd>{purchasesThisMonthList.length}</dd>
+              <dt>Premiums</dt>
+              <dd>{premiumBreakdown}</dd>
+              <dt>Total invoice</dt>
+              <dd className="user-detail-summary-total">{formatMoney(selectedMonthTotalPremiums)}</dd>
+            </dl>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+
   return (
     <div className="user-detail-page">
       <div className="user-detail-top-bar">
         <Link to="/users" className="user-detail-back">← Back to Users</Link>
-        {!editing ? (
-          <button type="button" className="user-detail-edit-btn" onClick={startEditing}>
-            Edit
-          </button>
-        ) : (
-          <div className="user-detail-edit-actions">
-            <button type="button" className="user-detail-cancel-btn" onClick={cancelEditing} disabled={submitting}>
-              Cancel
-            </button>
-            <button type="submit" form="user-detail-form" className="user-detail-save-btn" disabled={submitting}>
-              {submitting ? 'Saving…' : 'Save'}
-            </button>
-          </div>
-        )}
       </div>
 
-      {editing ? (
-        <form id="user-detail-form" className="user-detail-form" onSubmit={handleSubmit}>
-          {userHeader}
-          <section className="user-detail-section">
-            {submitError && (
-              <div className="user-detail-submit-error" role="alert">
-                {submitError}
-              </div>
-            )}
-            <div className="user-detail-tables-row">
-              {dealershipsTable}
-              {commissionTable}
-            </div>
-          </section>
-        </form>
-      ) : (
-        <>
-          {userHeader}
-          <section className="user-detail-section">
-            <div className="user-detail-tables-row">
-              {dealershipsTable}
-              {commissionTable}
-            </div>
-          </section>
-        </>
-      )}
+      {userHeader}
+      <section className="user-detail-section">
+        {(editingCommissionRules || editingDealerships) && submitError && (
+          <div className="user-detail-submit-error" role="alert">
+            {submitError}
+          </div>
+        )}
+        <div className="user-detail-tables-row">
+          {dealershipsTable}
+          {commissionTable}
+        </div>
+        {summaryBlock}
+      </section>
     </div>
   )
 }

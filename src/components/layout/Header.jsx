@@ -83,6 +83,11 @@ export default function Header() {
                 Users
               </NavLink>
             )}
+            {isAdmin && (
+              <NavLink to="/rules" className="app-header-nav" end={false}>
+                Rules
+              </NavLink>
+            )}
           </>
         )}
       </div>

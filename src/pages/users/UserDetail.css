@@ -124,8 +124,10 @@
 .user-detail-section {
   flex: 1;
   min-height: 0;
+  overflow-y: auto;
   margin-top: 16px;
   padding-top: 20px;
+  padding-right: 20px;
   border-top: 1px solid var(--border);
 }
 
@@ -358,11 +360,81 @@
   overflow: hidden;
 }
 
+.user-detail-card-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
 .user-detail-commission-title {
-  margin: 0 0 8px;
+  margin: 0;
   font-size: 1.0625rem;
   font-weight: 600;
   color: var(--text);
+}
+
+.user-detail-table-edit-btn {
+  padding: 4px 10px;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--header-blue);
+  background: transparent;
+  border: 1px solid var(--header-blue);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.user-detail-table-edit-btn:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.user-detail-table-edit-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.user-detail-table-cancel-btn {
+  padding: 4px 10px;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: var(--bg-page);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.user-detail-table-cancel-btn:hover:not(:disabled) {
+  border-color: var(--text-muted);
+  color: var(--text);
+}
+
+.user-detail-table-save-btn {
+  padding: 4px 10px;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: white;
+  background: var(--header-blue);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.user-detail-table-save-btn:hover:not(:disabled) {
+  background: var(--header-blue-hover);
+}
+
+.user-detail-table-save-btn:disabled,
+.user-detail-table-cancel-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .user-detail-commission-table-wrap {
@@ -447,4 +519,104 @@
 .user-detail-commission-add-label {
   font-size: 0.875rem;
   color: var(--text-muted);
+}
+
+/* Summary (purchases + breakdown) */
+.user-detail-summary {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.user-detail-summary-filters {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.user-detail-filter-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.user-detail-filter-select {
+  padding: 8px 12px;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  color: var(--text);
+  background: var(--bg-page);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  min-width: 120px;
+  cursor: pointer;
+}
+
+.user-detail-filter-select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+.user-detail-summary-row {
+  display: flex;
+  gap: 24px;
+  min-width: 0;
+}
+
+.user-detail-summary-left {
+  flex: 1;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.user-detail-summary-left .user-detail-commission-card {
+  min-width: 0;
+  max-width: 100%;
+  margin-bottom: 32px;
+}
+
+.user-detail-summary-table-wrap {
+  overflow: auto;
+  width: 100%;
+  max-height: 280px;
+}
+
+.user-detail-summary-right {
+  flex: 0 0 auto;
+  min-width: 200px;
+  border-left: 1px solid var(--border);
+  padding-left: 24px;
+  margin-bottom: 32px;
+}
+
+.user-detail-summary-dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 8px 20px;
+  font-size: 0.9375rem;
+  align-items: start;
+}
+
+.user-detail-summary-dl dt {
+  margin: 0;
+  font-weight: 700;
+  color: #000;
+}
+
+.user-detail-summary-dl dd {
+  margin: 0;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.user-detail-summary-total {
+  font-weight: 700;
+  font-size: 1.0625rem;
 }

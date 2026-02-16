@@ -10,6 +10,7 @@ import Dealer from './pages/dashboard/Dealer'
 import Dealerships from './pages/dealerships/Dealerships'
 import DealershipDetail from './pages/dealerships/DealershipDetail'
 import UserDetail from './pages/users/UserDetail'
+import Rules from './pages/rules/Rules'
 import Purchases from './pages/purchases/Purchases'
 import NewPurchase from './pages/purchases/NewPurchase'
 import PurchaseDetail from './pages/purchases/PurchaseDetail'
@@ -34,6 +35,7 @@ export default function App() {
           <Route path="/dealerships" element={<Dealerships />} />
           <Route path="/dealerships/:id" element={<DealershipDetail />} />
           <Route path="/users/:id" element={<UserDetail />} />
+          <Route path="/rules" element={<Rules />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
