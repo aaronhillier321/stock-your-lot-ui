@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link, Navigate } from 'react-router-dom'
 import { getApiBase, authFetch, getStoredToken } from '../../api'
+import { usePdfPreview } from '../../hooks/usePdfPreview'
+import PdfPreviewModal from '../../components/PdfPreviewModal'
+import pdfIcon from '../../../assets/pdf-icon.png'
 import './PurchaseDetail.css'
 
 function toFormData(purchase) {
@@ -49,6 +52,33 @@ export default function PurchaseDetail() {
   const [dealerships, setDealerships] = useState([])
   const [submitError, setSubmitError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [pdfError, setPdfError] = useState('')
+  const [loadingFileId, setLoadingFileId] = useState(null)
+  const pdfPreview = usePdfPreview()
+
+  async function handlePdfClick(fileId, label) {
+    if (!fileId) return
+    setPdfError('')
+    setLoadingFileId(fileId)
+    try {
+      const res = await authFetch(`${getApiBase()}/api/files/${fileId}`)
+      if (!res.ok) {
+        setPdfError(res.status === 404 ? 'File not found' : `Failed to load (${res.status})`)
+        return
+      }
+      const blob = await res.blob()
+      const file = new File(
+        [blob],
+        `${label.toLowerCase().replace(/\s+/g, '-')}.pdf`,
+        { type: blob.type || 'application/pdf' },
+      )
+      pdfPreview.openPreview(file, label)
+    } catch (err) {
+      setPdfError(err.message || 'Failed to load PDF')
+    } finally {
+      setLoadingFileId(null)
+    }
+  }
 
   useEffect(() => {
     let cancelled = false
@@ -151,6 +181,8 @@ export default function PurchaseDetail() {
   if (!purchase) return null
 
   const vehicleLine = [purchase.vehicleYear, purchase.vehicleMake, purchase.vehicleModel].filter(Boolean).join(' ') || '—'
+  const billOfSaleFileId = purchase.billOfSaleFileId ?? purchase.billOfSaleFileID ?? null
+  const conditionReportFileId = purchase.conditionReportFileId ?? purchase.conditionReportFileID ?? null
   const form = formData
 
   const content = (
@@ -188,6 +220,34 @@ export default function PurchaseDetail() {
               <input type="text" className="purchase-detail-input" value={form.vin} onChange={(e) => setFormData((f) => ({ ...f, vin: e.target.value }))} maxLength={17} />
             )}
           </dd>
+          {(billOfSaleFileId || conditionReportFileId) && (
+            <dd className="purchase-detail-dd purchase-detail-docs">
+              {billOfSaleFileId && (
+                <button
+                  type="button"
+                  className="purchases-table-pdf-btn purchase-detail-docs-btn"
+                  onClick={() => handlePdfClick(billOfSaleFileId, 'Bill of Sale')}
+                  disabled={loadingFileId === billOfSaleFileId}
+                  title="View Bill of Sale"
+                >
+                  <img src={pdfIcon} alt="Bill of Sale" className="purchases-table-pdf-icon" />
+                  <span>Bill of Sale</span>
+                </button>
+              )}
+              {conditionReportFileId && (
+                <button
+                  type="button"
+                  className="purchases-table-pdf-btn purchase-detail-docs-btn"
+                  onClick={() => handlePdfClick(conditionReportFileId, 'Condition Report')}
+                  disabled={loadingFileId === conditionReportFileId}
+                  title="View Condition Report"
+                >
+                  <img src={pdfIcon} alt="Condition Report" className="purchases-table-pdf-icon" />
+                  <span>Condition Report</span>
+                </button>
+              )}
+            </dd>
+          )}
         </dl>
       </div>
       <div className="purchase-detail-col">
@@ -214,12 +274,6 @@ export default function PurchaseDetail() {
               <input type="text" className="purchase-detail-input" value={form.auctionPlatform} onChange={(e) => setFormData((f) => ({ ...f, auctionPlatform: e.target.value }))} />
             )}
           </dd>
-          <dt>Miles</dt>
-          <dd className="purchase-detail-dd">
-            {!editing ? (purchase.miles != null ? purchase.miles.toLocaleString() : '—') : (
-              <input type="number" className="purchase-detail-input" value={form.miles} onChange={(e) => setFormData((f) => ({ ...f, miles: e.target.value }))} min={0} />
-            )}
-          </dd>
         </dl>
       </div>
       <div className="purchase-detail-col">
@@ -236,6 +290,14 @@ export default function PurchaseDetail() {
               <input type="number" step="any" className="purchase-detail-input" value={form.transportQuote} onChange={(e) => setFormData((f) => ({ ...f, transportQuote: e.target.value }))} min={0} />
             )}
           </dd>
+          <dt>Miles</dt>
+          <dd className="purchase-detail-dd">
+            {!editing ? (purchase.miles != null ? purchase.miles.toLocaleString() : '—') : (
+              <input type="number" className="purchase-detail-input" value={form.miles} onChange={(e) => setFormData((f) => ({ ...f, miles: e.target.value }))} min={0} />
+            )}
+          </dd>
+          <dt>Status</dt>
+          <dd className="purchase-detail-dd">{purchase.status ?? purchase.purchaseStatus ?? '—'}</dd>
           {(purchase.buyerId ?? purchase.buyer_id ?? purchase.buyerUsername ?? purchase.buyer_username ?? purchase.buyerEmail ?? purchase.buyer?.email) && (
             <>
               <dt>Buyer</dt>
@@ -250,8 +312,6 @@ export default function PurchaseDetail() {
               </dd>
             </>
           )}
-          <dt>Status</dt>
-          <dd className="purchase-detail-dd">{purchase.status ?? purchase.purchaseStatus ?? '—'}</dd>
         </dl>
       </div>
     </div>
@@ -385,6 +445,11 @@ export default function PurchaseDetail() {
             {submitError}
           </div>
         )}
+        {pdfError && (
+          <div className="purchase-detail-submit-error" role="alert">
+            {pdfError}
+          </div>
+        )}
         {editing ? (
           <form id="purchase-detail-form" className="purchase-detail-form" onSubmit={handleSubmit}>
             {content}
@@ -394,6 +459,15 @@ export default function PurchaseDetail() {
         )}
         {commissionsAndInvoice}
       </section>
+      <PdfPreviewModal
+        open={pdfPreview.isOpen}
+        url={pdfPreview.url}
+        label={pdfPreview.label}
+        onClose={() => {
+          setPdfError('')
+          pdfPreview.closePreview()
+        }}
+      />
     </div>
   )
 }

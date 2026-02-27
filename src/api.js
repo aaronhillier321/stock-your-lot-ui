@@ -146,17 +146,45 @@ export function clearAuth() {
 
 /**
  * fetch that adds Authorization: Bearer <token> when a token is stored.
- * On 401 (e.g. expired JWT), clears auth and redirects to login with session_expired=1.
+ * If the API indicates an expired/invalid JWT (401/403 or a body message),
+ * clears auth and redirects to login with session_expired=1.
  */
-export function authFetch(url, options = {}) {
+export async function authFetch(url, options = {}) {
   const token = getStoredToken()
   const headers = new Headers(options.headers)
   if (token) headers.set('Authorization', `Bearer ${token}`)
-  return fetch(url, { ...options, headers }).then((res) => {
-    if (res.status === 401) {
-      clearAuth()
-      window.location.replace('/?session_expired=1')
-    }
+
+  const res = await fetch(url, { ...options, headers })
+
+  // Direct auth status codes
+  if (res.status === 401 || res.status === 403) {
+    clearAuth()
+    window.location.replace('/?session_expired=1')
     return res
-  })
+  }
+
+  // Check WWW-Authenticate header, if present
+  const authHeader = res.headers.get('www-authenticate') || res.headers.get('WWW-Authenticate') || ''
+  if (/jwt/i.test(authHeader) && /expir/i.test(authHeader)) {
+    clearAuth()
+    window.location.replace('/?session_expired=1')
+    return res
+  }
+
+  // Check JSON error body for JWT expiry text without consuming original body
+  if (!res.ok) {
+    try {
+      const clone = res.clone()
+      const data = await clone.json().catch(() => null)
+      const msg = (data && (data.message || data.error || '')) || ''
+      if (/jwt/i.test(msg) && /expir/i.test(msg)) {
+        clearAuth()
+        window.location.replace('/?session_expired=1')
+      }
+    } catch {
+      // ignore JSON parse errors
+    }
+  }
+
+  return res
 }

@@ -96,11 +96,6 @@ export default function DealershipDetail() {
   const [submitError, setSubmitError] = useState('')
   const [submittingRules, setSubmittingRules] = useState(false)
   const [submittingUsers, setSubmittingUsers] = useState(false)
-  const [showInviteModal, setShowInviteModal] = useState(false)
-  const [inviteEmail, setInviteEmail] = useState('')
-  const [inviteSending, setInviteSending] = useState(false)
-  const [inviteError, setInviteError] = useState('')
-  const [inviteSuccess, setInviteSuccess] = useState('')
 
   useEffect(() => {
     let cancelled = false
@@ -342,44 +337,7 @@ export default function DealershipDetail() {
     }
   }
 
-  async function handleSendInvite(e) {
-    e.preventDefault()
-    const email = inviteEmail.trim()
-    if (!email) {
-      setInviteError('Please enter an email address.')
-      return
-    }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(email)) {
-      setInviteError('Please enter a valid email address.')
-      return
-    }
-    setInviteError('')
-    setInviteSuccess('')
-    setInviteSending(true)
-    try {
-      const res = await authFetch(`${getApiBase()}/api/invites`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, dealershipId: id }),
-      })
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}))
-        setInviteError(data.message || data.error || `Invite failed (${res.status})`)
-        return
-      }
-      setInviteSuccess(`Invitation sent to ${email}.`)
-      setInviteEmail('')
-      setTimeout(() => {
-        setShowInviteModal(false)
-        setInviteSuccess('')
-      }, 1500)
-    } catch (err) {
-      setInviteError(err.message || 'Failed to send invite')
-    } finally {
-      setInviteSending(false)
-    }
-  }
+  // Invite user functionality has moved to the Users page.
 
   if (!token) return <Navigate to="/" replace />
   if (loading) return <div className="dealership-detail-page"><p className="dealership-detail-loading">Loading…</p></div>
@@ -694,52 +652,6 @@ export default function DealershipDetail() {
           </tbody>
         </table>
       </div>
-      {editingUsers && (
-        <div className="dealership-detail-commission-add dealership-detail-users-add-row">
-          <div className="dealership-detail-users-add-select-wrap">
-            <select
-              className="dealership-detail-input dealership-detail-table-select"
-              value=""
-              onChange={(e) => {
-                const userId = e.target.value
-                if (!userId) return
-                const u = allUsers.find((x) => x.id === userId)
-                if (!u) return
-                const roles = u.dealershipRoles ?? u.dealership_roles ?? []
-                const d = roles.find((r) => (r.dealershipId ?? r.dealership_id) === id)
-                setFormData((f) => ({
-                  ...f,
-                  dealershipUsers: [
-                    ...(f.dealershipUsers ?? []),
-                    {
-                      userId: u.id,
-                      email: u.email ?? u.username ?? '',
-                      userName: [u.firstName, u.lastName].filter(Boolean).join(' ').trim() || (u.email ?? u.username ?? ''),
-                      role: (d?.role === 'ADMIN' ? 'ADMIN' : 'BUYER') || 'BUYER',
-                    },
-                  ],
-                }))
-              e.target.value = ''
-              }}
-              aria-label="Add user"
-            >
-              <option value="">Add user…</option>
-              {availableToAdd.map((u) => (
-                <option key={u.id} value={u.id}>
-                  {[u.firstName, u.lastName].filter(Boolean).join(' ').trim() || (u.email ?? u.username ?? u.id)}
-                </option>
-              ))}
-            </select>
-          </div>
-          <button
-            type="button"
-            className="dealership-detail-add-user-btn dealership-detail-invite-btn-inline"
-            onClick={() => { setInviteError(''); setInviteSuccess(''); setShowInviteModal(true); }}
-          >
-            Invite user
-          </button>
-        </div>
-      )}
     </div>
   )
 
@@ -899,43 +811,6 @@ export default function DealershipDetail() {
         </div>
         {summaryBlock}
       </section>
-
-      {showInviteModal && (
-        <div className="dealership-detail-modal-backdrop" onClick={() => setShowInviteModal(false)} aria-hidden>
-          <div className="dealership-detail-modal" onClick={(e) => e.stopPropagation()} role="dialog" aria-labelledby="invite-modal-title" aria-modal="true">
-            <div className="dealership-detail-modal-header">
-              <h3 id="invite-modal-title" className="dealership-detail-modal-title">Invite User</h3>
-              <button type="button" className="dealership-detail-modal-close" onClick={() => setShowInviteModal(false)} aria-label="Close">
-                ×
-              </button>
-            </div>
-            <form onSubmit={handleSendInvite} className="dealership-detail-invite-form">
-              <label className="dealership-detail-invite-label">
-                Email address
-                <input
-                  type="email"
-                  className="dealership-detail-invite-input"
-                  placeholder="user@example.com"
-                  value={inviteEmail}
-                  onChange={(e) => setInviteEmail(e.target.value)}
-                  disabled={inviteSending}
-                  autoComplete="email"
-                />
-              </label>
-              {inviteError && <p className="dealership-detail-invite-error" role="alert">{inviteError}</p>}
-              {inviteSuccess && <p className="dealership-detail-invite-success" role="status">{inviteSuccess}</p>}
-              <div className="dealership-detail-modal-actions">
-                <button type="button" className="dealership-detail-invite-cancel" onClick={() => setShowInviteModal(false)} disabled={inviteSending}>
-                  Cancel
-                </button>
-                <button type="submit" className="dealership-detail-invite-btn" disabled={inviteSending}>
-                  {inviteSending ? 'Sending…' : 'Send invite'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

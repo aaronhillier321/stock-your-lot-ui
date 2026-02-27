@@ -48,31 +48,41 @@ export default function Users() {
 
   async function handleAddUser(e) {
     e.preventDefault()
+    const email = addUserForm.email.trim()
+    if (!email) {
+      setAddUserError('Please enter an email address.')
+      return
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      setAddUserError('Please enter a valid email address.')
+      return
+    }
     setAddUserError('')
     setAddUserSending(true)
     try {
-      const res = await authFetch(`${getApiBase()}/api/users`, {
+      const res = await authFetch(`${getApiBase()}/api/invites`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          firstName: addUserForm.firstName.trim(),
-          lastName: addUserForm.lastName.trim(),
-          email: addUserForm.email.trim(),
-          phoneNumber: addUserForm.phone.trim() || undefined,
-          role: addUserForm.role,
+          email,
+          dealershipId: null,
+          firstName: addUserForm.firstName.trim() || null,
+          lastName: addUserForm.lastName.trim() || null,
+          phoneNumber: addUserForm.phone.trim() || null,
+          role: addUserForm.role || null,
         }),
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
-        setAddUserError(data.message || data.error || `Failed to add user (${res.status})`)
+        setAddUserError(data.message || data.error || `Invite failed (${res.status})`)
         return
       }
       setShowAddUserModal(false)
       setAddUserForm({ firstName: '', lastName: '', email: '', phone: '', role: 'BUYER' })
-      const data = await res.json()
-      setUsers((prev) => [data?.data ?? data, ...prev])
+      // Optionally refetch users; for now rely on list refresh elsewhere.
     } catch (err) {
-      setAddUserError(err.message || 'Failed to add user')
+      setAddUserError(err.message || 'Failed to send invite')
     } finally {
       setAddUserSending(false)
     }
@@ -184,6 +194,7 @@ export default function Users() {
                   required
                 >
                   <option value="BUYER">Buyer</option>
+                  <option value="DEALER">Dealer</option>
                   <option value="ADMIN">Admin</option>
                 </select>
               </label>
